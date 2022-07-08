@@ -1,33 +1,39 @@
 #!/usr/bin/env lua5.3
-local luatele_function, function_core, update_functions, luatele_timer = {}, {}, {}, {}
-local luatele = {get_update = true,config = {}}
-local LuaTele =  require('tdlua') 
-local client = LuaTele()
+local functionDo = {}
+local functionCo = {}
+local functionUp = {}
+local functionTi = {}
+local tdbot = {
+get_update = true,
+config = {}
+}
+local luaGrem =  require('tdlua') 
+local client = luaGrem()
 -----------------------------------------------
-function function_core._CALL_(update)
+function functionCo._CALL_(update)
 if update and type(update) == 'table' then
-for i = 0 , #update_functions do
-if not update_functions[i].filters then
+for i = 0 , #functionUp do
+if not functionUp[i].filters then
 send_update = true
 update_message = update
-elseif update.luatele and update_functions[i].filters and luatele_function.in_array(update_functions[i].filters,  update.luatele) then
+elseif update.tdbot and functionUp[i].filters and functionDo.in_array(functionUp[i].filters,  update.tdbot) then
 send_update = true
 update_message = update
 else
 send_update = false
 end
 if update_message and send_update and type(update_message) == 'table' then
-xpcall(update_functions[i].def, function_core.print_error, update_message)
+xpcall(functionUp[i].def, functionCo.print_error, update_message)
 end
 update_message = nil
 send_update = nil
 end
 end
 end
-function function_core.change_table(input, send)
+function functionCo.change_table(input, send)
 if send then
 changes ={
-luatele = string.reverse('epyt@')
+tdbot = string.reverse('epyt@')
 }
 rems = {
 }
@@ -51,7 +57,7 @@ local key = changes[key] or key
 if type(value) ~= 'table' then
 res[key] = value
 else
-res[key] = function_core.change_table(value, send)
+res[key] = functionCo.change_table(value, send)
 end
 end
 return res
@@ -59,29 +65,29 @@ else
 return input
 end
 end
-function function_core.run_table(input)
-local to_original = function_core.change_table(input, true)
+function functionCo.run_table(input)
+local to_original = functionCo.change_table(input, true)
 local result = client:execute(to_original)
 if type(result) ~= 'table' then
 return nil
 else
-return function_core.change_table(result)
+return functionCo.change_table(result)
 end
 end
-function function_core.print_error(err)
+function functionCo.print_error(err)
   print('There is an error in the file, please correct it '.. err)
 end
-function function_core.send_tdlib(input)
-local to_original = function_core.change_table(input, true)
+function functionCo.send_tdlib(input)
+local to_original = functionCo.change_table(input, true)
 client:send(to_original)
 end
-function_core.send_tdlib{
-luatele = 'getAuthorizationState'
+functionCo.send_tdlib{
+tdbot = 'getAuthorizationState'
 }
-LuaTele.setLogLevel(3)
-LuaTele.setLogPath('/usr/lib/x86_64-linux-gnu/lua/5.3/.luatele.log')
------------------------------------------------luatele_function
-function luatele_function.len(input)
+luaGrem.setLogLevel(3)
+luaGrem.setLogPath('/usr/lib/x86_64-linux-gnu/lua/lua5.3/.tdbot.log')
+-----------------------------------------------functionDo
+function functionDo.len(input)
 if type(input) == 'table' then
 size = 0
 for key,value in pairs(input) do
@@ -93,14 +99,14 @@ size = tostring(input)
 return #size
 end
 end
-function luatele_function.match(...)
+function functionDo.match(...)
 local val = {}
   for no,v in ipairs({...}) do
 val[v] = true
 end
 return val
 end
-function luatele_function.secToClock(seconds)
+function functionDo.secToClock(seconds)
 local seconds = tonumber(seconds)
 if seconds <= 0 then
 return {hours=00,mins=00,secs=00}
@@ -111,7 +117,7 @@ local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 6
 return {hours=hours,mins=mins,secs=secs}
 end
 end
-function luatele_function.number_format(num)
+function functionDo.number_format(num)
 local out = tonumber(num)
   while true do
 out,i= string.gsub(out,'^(-?%d+)(%d%d%d)', '%1,%2')
@@ -121,7 +127,7 @@ end
 end
 return out
 end
-function luatele_function.base64_encode(str)
+function functionDo.base64_encode(str)
 	local Base ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 	return ((str:gsub('.', function(x)
 			local r,Base='',x:byte()
@@ -134,7 +140,7 @@ function luatele_function.base64_encode(str)
 			return Base:sub(c+1,c+1)
 	end)..({ '', '==', '=' })[#str%3+1])
 end
-function luatele_function.base64_decode(str)
+function functionDo.base64_decode(str)
 	local Base ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   str = string.gsub(str, '[^'..Base..'=]', '')
 return (str:gsub('.', function(x)
@@ -153,7 +159,7 @@ for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
 return string.char(c)
 end))
 end
-function luatele_function.exists(file)
+function functionDo.exists(file)
  local ok, err, code = os.rename(file, file)
  if not ok then
 if code == 13 then
@@ -162,7 +168,7 @@ end
  end
  return ok, err
 end
-function luatele_function.in_array(table, value)
+function functionDo.in_array(table, value)
   for k,v in pairs(table) do
 if value == v then
 return true
@@ -170,87 +176,87 @@ end
 end
 return false
 end
-function luatele_function.add_events(def,filters)
+function functionDo.add_events(def,filters)
 if type(def) ~= 'function' then
-function_core.print_error('the add_events def must be a function !')
+functionCo.print_error('the add_events def must be a function !')
 return {
-luatele = false,
+tdbot = false,
 }
   elseif type(filters) ~= 'table' then
-function_core.print_error('the add_events filters must be a table !')
+functionCo.print_error('the add_events filters must be a table !')
 return {
-luatele = false,
+tdbot = false,
 }
 else
-local function_id = #update_functions + 1
-update_functions[function_id] = {}
-update_functions[function_id].def = def
-update_functions[function_id].filters = filters
+local function_id = #functionUp + 1
+functionUp[function_id] = {}
+functionUp[function_id].def = def
+functionUp[function_id].filters = filters
 return {
-luatele = true,
+tdbot = true,
 }
 end
 end
 
 
-function luatele_function.set_timer(seconds, def, argv)
+function functionDo.set_timer(seconds, def, argv)
 if type(seconds) ~= 'number' then
 return {
-luatele = false,
+tdbot = false,
 message = 'set_timer(int seconds, funtion def, table)'
 }
 elseif type(def) ~= 'function' then
 return {
-luatele = false,
+tdbot = false,
 message = 'set_timer(int seconds, funtion def, table)'
 }
 end
-luatele_timer[#luatele_timer + 1] = {
+functionTi[#functionTi + 1] = {
 def = def,
 argv = argv,
 run_in = os.time() + seconds
 }
 return {
-luatele = true,
+tdbot = true,
 run_in = os.time() + seconds,
-timer_id = #luatele_timer
+timer_id = #functionTi
 }
 end
-function luatele_function.get_timer(timer_id)
-local timer_data = luatele_timer[timer_id]
+function functionDo.get_timer(timer_id)
+local timer_data = functionTi[timer_id]
 if timer_data then
 return {
-luatele = true,
+tdbot = true,
 run_in = timer_data.run_in,
 argv = timer_data.argv
 }
   else
 return {
-luatele = false,
+tdbot = false,
 }
 end
 end
-function luatele_function.cancel_timer(timer_id)
-if luatele_timer[timer_id] then
-table.remove(luatele_timer,timer_id)
+function functionDo.cancel_timer(timer_id)
+if functionTi[timer_id] then
+table.remove(functionTi,timer_id)
 return {
-luatele = true
+tdbot = true
 }
   else
 return {
-luatele = false
+tdbot = false
 }
 end
 end
 
-function luatele_function.replyMarkup(input)
+function functionDo.replyMarkup(input)
 if type(input.type) ~= 'string' then
 return nil
 end
 local _type = string.lower(input.type)
 if _type == 'inline' then
 local result = {
-luatele = 'replyMarkupInlineKeyboard',
+tdbot = 'replyMarkupInlineKeyboard',
 rows = {
 }
 }
@@ -261,40 +267,40 @@ for key, value in pairs(rows) do
   local rows_new_id = #result.rows[new_id] + 1
 if value.url and value.text then
 result.rows[new_id][rows_new_id] = {
-  luatele = 'inlineKeyboardButton',
+  tdbot = 'inlineKeyboardButton',
 text = value.text,
 type = {
-luatele = 'inlineKeyboardButtonTypeUrl',
+tdbot = 'inlineKeyboardButtonTypeUrl',
   url = value.url
 }
 }
 elseif value.data and value.text then
 result.rows[new_id][rows_new_id] = {
-luatele = 'inlineKeyboardButton',
+tdbot = 'inlineKeyboardButton',
   text = value.text,
   type = {
-data = luatele_function.base64_encode(value.data), -- Base64 only
-luatele = 'inlineKeyboardButtonTypeCallback',
+data = functionDo.base64_encode(value.data), -- Base64 only
+tdbot = 'inlineKeyboardButtonTypeCallback',
 }
 }
   elseif value.forward_text and value.id and value.url and value.text then
 result.rows[new_id][rows_new_id] = {
-luatele = 'inlineKeyboardButton',
+tdbot = 'inlineKeyboardButton',
   text = value.text,
   type = {
 id = value.id,
 url = value.url,
 forward_text = value.forward_text,
-luatele = 'inlineKeyboardButtonTypeLoginUrl',
+tdbot = 'inlineKeyboardButtonTypeLoginUrl',
 }
 }
   elseif value.query and value.text then
 result.rows[new_id][rows_new_id] = {
-luatele = 'inlineKeyboardButton',
+tdbot = 'inlineKeyboardButton',
   text = value.text,
   type = {
 query = value.query,
-luatele = 'inlineKeyboardButtonTypeSwitchInline',
+tdbot = 'inlineKeyboardButtonTypeSwitchInline',
 }
 }
 end
@@ -303,7 +309,7 @@ end
 return result
 elseif _type == 'keyboard' then
 local result = {
-luatele = 'replyMarkupShowKeyboard',
+tdbot = 'replyMarkupShowKeyboard',
 resize_keyboard = input.resize,
 one_time = input.one_time,
 is_personal = input.is_personal,
@@ -320,35 +326,35 @@ value.type = string.lower(value.type)
 if value.type == 'requestlocation' and value.text then
 result.rows[new_id][rows_new_id] = {
   type = {
-luatele = 'keyboardButtonTypeRequestLocation'
+tdbot = 'keyboardButtonTypeRequestLocation'
 },
-luatele = 'keyboardButton',
+tdbot = 'keyboardButton',
   text = value.text
 }
   elseif value.type == 'requestphone' and value.text then
 result.rows[new_id][rows_new_id] = {
   type = {
-luatele = 'keyboardButtonTypeRequestPhoneNumber'
+tdbot = 'keyboardButtonTypeRequestPhoneNumber'
 },
-luatele = 'keyboardButton',
+tdbot = 'keyboardButton',
   text = value.text
 }
   elseif value.type == 'requestpoll' and value.text then
 result.rows[new_id][rows_new_id] = {
   type = {
-luatele = 'keyboardButtonTypeRequestPoll',
+tdbot = 'keyboardButtonTypeRequestPoll',
 force_regular = value.force_regular,
 force_quiz = value.force_quiz
 },
-luatele = 'keyboardButton',
+tdbot = 'keyboardButton',
   text = value.text
 }
   elseif value.type == 'text' and value.text then
 result.rows[new_id][rows_new_id] = {
   type = {
-luatele = 'keyboardButtonTypeText'
+tdbot = 'keyboardButtonTypeText'
 },
-luatele = 'keyboardButton',
+tdbot = 'keyboardButton',
   text = value.text
 }
 end
@@ -358,77 +364,77 @@ end
 return result
 elseif _type == 'forcereply' then
 return {
-luatele = 'replyMarkupForceReply',
+tdbot = 'replyMarkupForceReply',
 is_personal = input.is_personal
 }
 elseif _type == 'remove' then
 return {
-luatele = 'replyMarkupRemoveKeyboard',
+tdbot = 'replyMarkupRemoveKeyboard',
 is_personal = input.is_personal
 }
 end
 end
-function luatele_function.addProxy(proxy_type, server, port, username, password_secret, http_only)
+function functionDo.addProxy(proxy_type, server, port, username, password_secret, http_only)
 if type(proxy_type) ~= 'string' then
 return {
-luatele = false
+tdbot = false
 }
 end
 local proxy_type = string.lower(proxy_type)
 if proxy_type == 'mtproto' then
 _type_ = {
-luatele = 'proxyTypeMtproto',
+tdbot = 'proxyTypeMtproto',
 secret = password_secret
 }
 elseif proxy_Type == 'socks5' then
 _type_ = {
-luatele = 'proxyTypeSocks5',
+tdbot = 'proxyTypeSocks5',
 username = username,
 password = password_secret
 }
 elseif proxy_Type == 'http' then
 _type_ = {
-luatele = 'proxyTypeHttp',
+tdbot = 'proxyTypeHttp',
 username = username,
 password = password_secret,
 http_only = http_only
 }
   else
 return {
-luatele = false
+tdbot = false
 }
 end
-return function_core.run_table{
-luatele = 'addProxy',
+return functionCo.run_table{
+tdbot = 'addProxy',
 server = server,
 port = port,
 type = _type_
 }
 end
-function luatele_function.enableProxy(proxy_id)
-return function_core.run_table{
- luatele = 'enableProxy',
+function functionDo.enableProxy(proxy_id)
+return functionCo.run_table{
+ tdbot = 'enableProxy',
 proxy_id = proxy_id
 }
 end
-function luatele_function.pingProxy(proxy_id)
-return function_core.run_table{
- luatele = 'pingProxy',
+function functionDo.pingProxy(proxy_id)
+return functionCo.run_table{
+ tdbot = 'pingProxy',
 proxy_id = proxy_id
 }
 end
-function luatele_function.disableProxy(proxy_id)
-return function_core.run_table{
- luatele = 'disableProxy',
+function functionDo.disableProxy(proxy_id)
+return functionCo.run_table{
+ tdbot = 'disableProxy',
 proxy_id = proxy_id
 }
 end
-function luatele_function.getProxies()
-return function_core.run_table{
-luatele = 'getProxies'
+function functionDo.getProxies()
+return functionCo.run_table{
+tdbot = 'getProxies'
 }
 end
-function luatele_function.getChatId(chat_id)
+function functionDo.getChatId(chat_id)
 local chat_id = tostring(chat_id)
 if chat_id:match('^-100') then
 return {
@@ -443,11 +449,11 @@ type = 'basicgroup'
 }
 end
 end
-function luatele_function.getInputFile(file, conversion_str, expected_size)
+function functionDo.getInputFile(file, conversion_str, expected_size)
 local str = tostring(file)
 if (conversion_str and expectedsize) then
 return {
-luatele = 'inputFileGenerated',
+tdbot = 'inputFileGenerated',
 original_path = tostring(file),
 conversion = tostring(conversion_str),
 expected_size = expected_size
@@ -455,37 +461,37 @@ expected_size = expected_size
   else
 if str:match('/') then
 return {
-luatele = 'inputFileLocal',
+tdbot = 'inputFileLocal',
   path = file
 }
   elseif str:match('^%d+$') then
 return {
-luatele = 'inputFileId',
+tdbot = 'inputFileId',
   id = file
 }
 else
 return {
-luatele = 'inputFileRemote',
+tdbot = 'inputFileRemote',
   id = file
 }
 end
 end
 end
-function luatele_function.getParseMode(parse_mode)
+function functionDo.getParseMode(parse_mode)
 if parse_mode then
 local mode = parse_mode:lower()
 if mode == 'markdown' or mode == 'md' then
 return {
-luatele = 'textParseModeMarkdown',
+tdbot = 'textParseModeMarkdown',
 }
 elseif mode == 'html' or mode == 'lg' then
 return {
-luatele = 'textParseModeHTML'
+tdbot = 'textParseModeHTML'
 }
 end
 end
 end
-function luatele_function.parseTextEntities(text, parse_mode)
+function functionDo.parseTextEntities(text, parse_mode)
 if type(parse_mode) == 'string' and string.lower(parse_mode) == 'lg' then
 for txt in text:gmatch('%%{(.-)}') do
 local _text, text_type = txt:match('(.*),(.*)')
@@ -510,13 +516,13 @@ end
 end
 end
 end
-return function_core.run_table{
-luatele = 'parseTextEntities',
+return functionCo.run_table{
+tdbot = 'parseTextEntities',
 text = tostring(text),
-parse_mode = luatele_function.getParseMode(parse_mode)
+parse_mode = functionDo.getParseMode(parse_mode)
 }
 end
-function luatele_function.vectorize(table)
+function functionDo.vectorize(table)
 if type(table) == 'table' then
 return table
   else
@@ -525,14 +531,14 @@ table
 }
 end
 end
-function luatele_function.setLimit(limit, num)
+function functionDo.setLimit(limit, num)
 local limit = tonumber(limit)
 local number = tonumber(num or limit)
 return (number >= limit) and limit or number
 end
-function luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
-local luatele_body, message = {
-luatele = 'sendMessage',
+function functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+local tdbot_body, message = {
+tdbot = 'sendMessage',
 chat_id = chat_id,
 reply_to_message_id = reply_to_message_id or 0,
 disable_notification = disable_notification or 0,
@@ -547,13 +553,13 @@ text = input_message_content.caption.text
 end
 if text then
 if parse_mode then
-local result = luatele_function.parseTextEntities(text, parse_mode)
-if luatele_body.input_message_content.text then
-luatele_body.input_message_content.text = result
+local result = functionDo.parseTextEntities(text, parse_mode)
+if tdbot_body.input_message_content.text then
+tdbot_body.input_message_content.text = result
 else
-luatele_body.input_message_content.caption = result
+tdbot_body.input_message_content.caption = result
 end
-return function_core.run_table(luatele_body)
+return functionCo.run_table(tdbot_body)
 else
 while #text > 4096 do
   text = string.sub(text, 4096, #text)
@@ -562,29 +568,29 @@ end
 message[#message + 1] = text
 for i = 1, #message do
 if input_message_content.text and input_message_content.text.text then
-luatele_body.input_message_content.text.text = message[i]
+tdbot_body.input_message_content.text.text = message[i]
 elseif input_message_content.caption and input_message_content.caption.text then
-luatele_body.input_message_content.caption.text = message[i]
+tdbot_body.input_message_content.caption.text = message[i]
 end
-return function_core.run_table(luatele_body)
+return functionCo.run_table(tdbot_body)
 end
 end
   else
-return function_core.run_table(luatele_body)
+return functionCo.run_table(tdbot_body)
 end
 end
-function luatele_function.logOut()
-return function_core.run_table{
-luatele = 'logOut'
+function functionDo.logOut()
+return functionCo.run_table{
+tdbot = 'logOut'
 }
 end
-function luatele_function.getPasswordState()
-return function_core.run_table{
-luatele = 'getPasswordState'
+function functionDo.getPasswordState()
+return functionCo.run_table{
+tdbot = 'getPasswordState'
 }
 end
-function luatele_function.setPassword(old_password, new_password, new_hint, set_recovery_email_address, new_recovery_email_address)
-return function_core.run_table{
+function functionDo.setPassword(old_password, new_password, new_hint, set_recovery_email_address, new_recovery_email_address)
+return functionCo.run_table{
 old_password = tostring(old_password),
 new_password = tostring(new_password),
 new_hint = tostring(new_hint),
@@ -592,338 +598,338 @@ set_recovery_email_address = set_recovery_email_address,
 new_recovery_email_address = tostring(new_recovery_email_address)
 }
 end
-function luatele_function.getRecoveryEmailAddress(password)
-return function_core.run_table{
-luatele = 'getRecoveryEmailAddress',
+function functionDo.getRecoveryEmailAddress(password)
+return functionCo.run_table{
+tdbot = 'getRecoveryEmailAddress',
 password = tostring(password)
 }
 end
-function luatele_function.setRecoveryEmailAddress(password, new_recovery_email_address)
-return function_core.run_table{
-luatele = 'setRecoveryEmailAddress',
+function functionDo.setRecoveryEmailAddress(password, new_recovery_email_address)
+return functionCo.run_table{
+tdbot = 'setRecoveryEmailAddress',
 password = tostring(password),
 new_recovery_email_address = tostring(new_recovery_email_address)
 }
 end
-function luatele_function.requestPasswordRecovery()
-return function_core.run_table{
-luatele = 'requestPasswordRecovery'
+function functionDo.requestPasswordRecovery()
+return functionCo.run_table{
+tdbot = 'requestPasswordRecovery'
 }
 end
-function luatele_function.recoverPassword(recovery_code)
-return function_core.run_table{
-luatele = 'recoverPassword',
+function functionDo.recoverPassword(recovery_code)
+return functionCo.run_table{
+tdbot = 'recoverPassword',
 recovery_code = tostring(recovery_code)
 }
 end
-function luatele_function.createTemporaryPassword(password, valid_for)
+function functionDo.createTemporaryPassword(password, valid_for)
 local valid_for = valid_for > 86400 and 86400 or valid_for
-return function_core.run_table{
-luatele = 'createTemporaryPassword',
+return functionCo.run_table{
+tdbot = 'createTemporaryPassword',
 password = tostring(password),
 valid_for = valid_for
 }
 end
-function luatele_function.getTemporaryPasswordState()
-return function_core.run_table{
-luatele = 'getTemporaryPasswordState'
+function functionDo.getTemporaryPasswordState()
+return functionCo.run_table{
+tdbot = 'getTemporaryPasswordState'
 }
 end
-function luatele_function.getMe()
-return function_core.run_table{
-luatele = 'getMe'
+function functionDo.getMe()
+return functionCo.run_table{
+tdbot = 'getMe'
 }
 end
-function luatele_function.getUser(user_id)
-return function_core.run_table{
-luatele = 'getUser',
+function functionDo.getUser(user_id)
+return functionCo.run_table{
+tdbot = 'getUser',
 user_id = user_id
 }
 end
-function luatele_function.getUserFullInfo(user_id)
-return function_core.run_table{
-luatele = 'getUserFullInfo',
+function functionDo.getUserFullInfo(user_id)
+return functionCo.run_table{
+tdbot = 'getUserFullInfo',
 user_id = user_id
 }
 end
-function luatele_function.getBasicGroup(basic_group_id)
-return function_core.run_table{
-luatele = 'getBasicGroup',
-basic_group_id = luatele_function.getChatId(basic_group_id).id
+function functionDo.getBasicGroup(basic_group_id)
+return functionCo.run_table{
+tdbot = 'getBasicGroup',
+basic_group_id = functionDo.getChatId(basic_group_id).id
 }
 end
-function luatele_function.getBasicGroupFullInfo(basic_group_id)
-return function_core.run_table{
-luatele = 'getBasicGroupFullInfo',
-basic_group_id = luatele_function.getChatId(basic_group_id).id
+function functionDo.getBasicGroupFullInfo(basic_group_id)
+return functionCo.run_table{
+tdbot = 'getBasicGroupFullInfo',
+basic_group_id = functionDo.getChatId(basic_group_id).id
 }
 end
-function luatele_function.getSupergroup(supergroup_id)
-return function_core.run_table{
-luatele = 'getSupergroup',
-supergroup_id = luatele_function.getChatId(supergroup_id).id
+function functionDo.getSupergroup(supergroup_id)
+return functionCo.run_table{
+tdbot = 'getSupergroup',
+supergroup_id = functionDo.getChatId(supergroup_id).id
 }
 end
-function luatele_function.getSupergroupFullInfo(supergroup_id)
-return function_core.run_table{
-luatele = 'getSupergroupFullInfo',
-supergroup_id = luatele_function.getChatId(supergroup_id).id
+function functionDo.getSupergroupFullInfo(supergroup_id)
+return functionCo.run_table{
+tdbot = 'getSupergroupFullInfo',
+supergroup_id = functionDo.getChatId(supergroup_id).id
 }
 end
-function luatele_function.getSecretChat(secret_chat_id)
-return function_core.run_table{
-luatele = 'getSecretChat',
+function functionDo.getSecretChat(secret_chat_id)
+return functionCo.run_table{
+tdbot = 'getSecretChat',
 secret_chat_id = secret_chat_id
 }
 end
-function luatele_function.getChat(chat_id)
-return function_core.run_table{
-luatele = 'getChat',
+function functionDo.getChat(chat_id)
+return functionCo.run_table{
+tdbot = 'getChat',
 chat_id = chat_id
 }
 end
-function luatele_function.getMessage(chat_id, message_id)
-return function_core.run_table{
-luatele = 'getMessage',
+function functionDo.getMessage(chat_id, message_id)
+return functionCo.run_table{
+tdbot = 'getMessage',
 chat_id = chat_id,
 message_id = message_id
 }
 end
-function luatele_function.getRepliedMessage(chat_id, message_id)
-return function_core.run_table{
-luatele = 'getRepliedMessage',
+function functionDo.getRepliedMessage(chat_id, message_id)
+return functionCo.run_table{
+tdbot = 'getRepliedMessage',
 chat_id = chat_id,
 message_id = message_id
 }
 end
-function luatele_function.getChatPinnedMessage(chat_id)
-return function_core.run_table{
-luatele = 'getChatPinnedMessage',
+function functionDo.getChatPinnedMessage(chat_id)
+return functionCo.run_table{
+tdbot = 'getChatPinnedMessage',
 chat_id = chat_id
 }
 end
-function luatele_function.unpinAllChatMessages(chat_id)
-return function_core.run_table{
-luatele = 'unpinAllChatMessages',
+function functionDo.unpinAllChatMessages(chat_id)
+return functionCo.run_table{
+tdbot = 'unpinAllChatMessages',
 chat_id = chat_id
 }
 end
-function luatele_function.getMessages(chat_id, message_ids)
-return function_core.run_table{
-luatele = 'getMessages',
+function functionDo.getMessages(chat_id, message_ids)
+return functionCo.run_table{
+tdbot = 'getMessages',
 chat_id = chat_id,
-message_ids = luatele_function.vectorize(message_ids)
+message_ids = functionDo.vectorize(message_ids)
 }
 end
-function luatele_function.getFile(file_id)
-return function_core.run_table{
-luatele = 'getFile',
+function functionDo.getFile(file_id)
+return functionCo.run_table{
+tdbot = 'getFile',
 file_id = file_id
 }
 end
-function luatele_function.getRemoteFile(remote_file_id, file_type)
-return function_core.run_table{
-luatele = 'getRemoteFile',
+function functionDo.getRemoteFile(remote_file_id, file_type)
+return functionCo.run_table{
+tdbot = 'getRemoteFile',
 remote_file_id = tostring(remote_file_id),
 file_type = {
-luatele = 'fileType' .. file_type or 'Unknown'
+tdbot = 'fileType' .. file_type or 'Unknown'
 }
 }
 end
-function luatele_function.getChats(chat_list, offset_order, offset_chat_id, limit)
+function functionDo.getChats(chat_list, offset_order, offset_chat_id, limit)
 local limit = limit or 20
 local offset_order = offset_order or '9223372036854775807'
 local offset_chat_id = offset_chat_id or 0
 local filter = (string.lower(tostring(chat_list)) == 'archive') and 'chatListArchive' or 'chatListMain'
-return function_core.run_table{
-luatele = 'getChats',
+return functionCo.run_table{
+tdbot = 'getChats',
 offset_order = offset_order,
 offset_chat_id = offset_chat_id,
-limit = luatele_function.setLimit(100, limit),
+limit = functionDo.setLimit(100, limit),
 chat_list = {
-luatele = filter
+tdbot = filter
 }
 }
 end
-function luatele_function.searchPublicChat(username)
-return function_core.run_table{
-luatele = 'searchPublicChat',
+function functionDo.searchPublicChat(username)
+return functionCo.run_table{
+tdbot = 'searchPublicChat',
 username = tostring(username)
 }
 end
-function luatele_function.searchPublicChats(query)
-return function_core.run_table{
-luatele = 'searchPublicChats',
+function functionDo.searchPublicChats(query)
+return functionCo.run_table{
+tdbot = 'searchPublicChats',
 query = tostring(query)
 }
 end
-function luatele_function.searchChats(query, limit)
-return function_core.run_table{
-luatele = 'searchChats',
+function functionDo.searchChats(query, limit)
+return functionCo.run_table{
+tdbot = 'searchChats',
 query = tostring(query),
 limit = limit
 }
 end
-function luatele_function.checkChatUsername(chat_id, username)
-return function_core.run_table{
-luatele = 'checkChatUsername',
+function functionDo.checkChatUsername(chat_id, username)
+return functionCo.run_table{
+tdbot = 'checkChatUsername',
 chat_id = chat_id,
 username = tostring(username)
 }
 end
-function luatele_function.searchChatsOnServer(query, limit)
-return function_core.run_table{
-luatele = 'searchChatsOnServer',
+function functionDo.searchChatsOnServer(query, limit)
+return functionCo.run_table{
+tdbot = 'searchChatsOnServer',
 query = tostring(query),
 limit = limit
 }
 end
-function luatele_function.clearRecentlyFoundChats()
-return function_core.run_table{
-luatele = 'clearRecentlyFoundChats'
+function functionDo.clearRecentlyFoundChats()
+return functionCo.run_table{
+tdbot = 'clearRecentlyFoundChats'
 }
 end
-function luatele_function.getTopChats(category, limit)
-return function_core.run_table{
-luatele = 'getTopChats',
+function functionDo.getTopChats(category, limit)
+return functionCo.run_table{
+tdbot = 'getTopChats',
 category = {
-luatele = 'topChatCategory' .. category
+tdbot = 'topChatCategory' .. category
 },
-limit = luatele_function.setLimit(30, limit)
+limit = functionDo.setLimit(30, limit)
 }
 end
-function luatele_function.removeTopChat(category, chat_id)
-return function_core.run_table{
-luatele = 'removeTopChat',
+function functionDo.removeTopChat(category, chat_id)
+return functionCo.run_table{
+tdbot = 'removeTopChat',
 category = {
-luatele = 'topChatCategory' .. category
+tdbot = 'topChatCategory' .. category
 },
 chat_id = chat_id
 }
 end
-function luatele_function.addRecentlyFoundChat(chat_id)
-return function_core.run_table{
-luatele = 'addRecentlyFoundChat',
+function functionDo.addRecentlyFoundChat(chat_id)
+return functionCo.run_table{
+tdbot = 'addRecentlyFoundChat',
 chat_id = chat_id
 }
 end
-function luatele_function.getCreatedPublicChats()
-return function_core.run_table{
-luatele = 'getCreatedPublicChats'
+function functionDo.getCreatedPublicChats()
+return functionCo.run_table{
+tdbot = 'getCreatedPublicChats'
 }
 end
-function luatele_function.removeRecentlyFoundChat(chat_id)
-return function_core.run_table{
-luatele = 'removeRecentlyFoundChat',
+function functionDo.removeRecentlyFoundChat(chat_id)
+return functionCo.run_table{
+tdbot = 'removeRecentlyFoundChat',
 chat_id = chat_id
 }
 end
-function luatele_function.getChatHistory(chat_id, from_message_id, offset, limit, only_local)
-return function_core.run_table{
-luatele = 'getChatHistory',
+function functionDo.getChatHistory(chat_id, from_message_id, offset, limit, only_local)
+return functionCo.run_table{
+tdbot = 'getChatHistory',
 chat_id = chat_id,
 from_message_id = from_message_id,
 offset = offset,
-limit = luatele_function.setLimit(100, limit),
+limit = functionDo.setLimit(100, limit),
 only_local = only_local
 }
 end
-function luatele_function.getGroupsInCommon(user_id, offset_chat_id, limit)
-return function_core.run_table{
-luatele = 'getGroupsInCommon',
+function functionDo.getGroupsInCommon(user_id, offset_chat_id, limit)
+return functionCo.run_table{
+tdbot = 'getGroupsInCommon',
 user_id = user_id,
 offset_chat_id = offset_chat_id or 0,
-limit = luatele_function.setLimit(100, limit)
+limit = functionDo.setLimit(100, limit)
 }
 end
-function luatele_function.searchMessages(query, offset_date, offset_chat_id, offset_message_id, limit)
-return function_core.run_table{
-luatele = 'searchMessages',
+function functionDo.searchMessages(query, offset_date, offset_chat_id, offset_message_id, limit)
+return functionCo.run_table{
+tdbot = 'searchMessages',
 query = tostring(query),
 offset_date = offset_date or 0,
 offset_chat_id = offset_chat_id or 0,
 offset_message_id = offset_message_id or 0,
-limit = luatele_function.setLimit(100, limit)
+limit = functionDo.setLimit(100, limit)
 }
 end
-function luatele_function.searchChatMessages(chat_id, query, filter, sender_user_id, from_message_id, offset, limit)
-return function_core.run_table{
-luatele = 'searchChatMessages',
+function functionDo.searchChatMessages(chat_id, query, filter, sender_user_id, from_message_id, offset, limit)
+return functionCo.run_table{
+tdbot = 'searchChatMessages',
 chat_id = chat_id,
 query = tostring(query),
 sender_user_id = sender_user_id or 0,
 from_message_id = from_message_id or 0,
 offset = offset or 0,
-limit = luatele_function.setLimit(100, limit),
+limit = functionDo.setLimit(100, limit),
 filter = {
-luatele = 'searchMessagesFilter' .. filter
+tdbot = 'searchMessagesFilter' .. filter
 }
 }
 end
-function luatele_function.searchSecretMessages(chat_id, query, from_search_id, limit, filter)
+function functionDo.searchSecretMessages(chat_id, query, from_search_id, limit, filter)
 local filter = filter or 'Empty'
-return function_core.run_table{
-luatele = 'searchSecretMessages',
+return functionCo.run_table{
+tdbot = 'searchSecretMessages',
 chat_id = chat_id or 0,
 query = tostring(query),
 from_search_id = from_search_id or 0,
-limit = luatele_function.setLimit(100, limit),
+limit = functionDo.setLimit(100, limit),
 filter = {
-luatele = 'searchMessagesFilter' .. filter
+tdbot = 'searchMessagesFilter' .. filter
 }
 }
 end
-function luatele_function.deleteChatHistory(chat_id, remove_from_chat_list)
-return function_core.run_table{
-luatele = 'deleteChatHistory',
+function functionDo.deleteChatHistory(chat_id, remove_from_chat_list)
+return functionCo.run_table{
+tdbot = 'deleteChatHistory',
 chat_id = chat_id,
 remove_from_chat_list = remove_from_chat_list
 }
 end
-function luatele_function.searchCallMessages(from_message_id, limit, only_missed)
-return function_core.run_table{
-luatele = 'searchCallMessages',
+function functionDo.searchCallMessages(from_message_id, limit, only_missed)
+return functionCo.run_table{
+tdbot = 'searchCallMessages',
 from_message_id = from_message_id or 0,
-limit = luatele_function.setLimit(100, limit),
+limit = functionDo.setLimit(100, limit),
 only_missed = only_missed
 }
 end
-function luatele_function.getChatMessageByDate(chat_id, date)
-return function_core.run_table{
-luatele = 'getChatMessageByDate',
+function functionDo.getChatMessageByDate(chat_id, date)
+return functionCo.run_table{
+tdbot = 'getChatMessageByDate',
 chat_id = chat_id,
 date = date
 }
 end
-function luatele_function.getPublicMessageLink(chat_id, message_id, for_album)
-return function_core.run_table{
-luatele = 'getPublicMessageLink',
+function functionDo.getPublicMessageLink(chat_id, message_id, for_album)
+return functionCo.run_table{
+tdbot = 'getPublicMessageLink',
 chat_id = chat_id,
 message_id = message_id,
 for_album = for_album
 }
 end
-function luatele_function.sendMessageAlbum(chat_id, reply_to_message_id, input_message_contents, disable_notification, from_background)
-return function_core.run_table{
-luatele = 'sendMessageAlbum',
+function functionDo.sendMessageAlbum(chat_id, reply_to_message_id, input_message_contents, disable_notification, from_background)
+return functionCo.run_table{
+tdbot = 'sendMessageAlbum',
 chat_id = chat_id,
 reply_to_message_id = reply_to_message_id or 0,
 disable_notification = disable_notification,
 from_background = from_background,
-input_message_contents = luatele_function.vectorize(input_message_contents)
+input_message_contents = functionDo.vectorize(input_message_contents)
 }
 end
-function luatele_function.sendBotStartMessage(bot_user_id, chat_id, parameter)
-return function_core.run_table{
-luatele = 'sendBotStartMessage',
+function functionDo.sendBotStartMessage(bot_user_id, chat_id, parameter)
+return functionCo.run_table{
+tdbot = 'sendBotStartMessage',
 bot_user_id = bot_user_id,
 chat_id = chat_id,
 parameter = tostring(parameter)
 }
 end
-function luatele_function.sendInlineQueryResultMessage(chat_id, reply_to_message_id, disable_notification, from_background, query_id, result_id)
-return function_core.run_table{
-luatele = 'sendInlineQueryResultMessage',
+function functionDo.sendInlineQueryResultMessage(chat_id, reply_to_message_id, disable_notification, from_background, query_id, result_id)
+return functionCo.run_table{
+tdbot = 'sendInlineQueryResultMessage',
 chat_id = chat_id,
 reply_to_message_id = reply_to_message_id,
 disable_notification = disable_notification,
@@ -932,12 +938,12 @@ query_id = query_id,
 result_id = tostring(result_id)
 }
 end
-function luatele_function.forwardMessages(chat_id, from_chat_id, message_ids, disable_notification, from_background, as_album, send_copy, remove_caption)
-return function_core.run_table{
-luatele = 'forwardMessages',
+function functionDo.forwardMessages(chat_id, from_chat_id, message_ids, disable_notification, from_background, as_album, send_copy, remove_caption)
+return functionCo.run_table{
+tdbot = 'forwardMessages',
 chat_id = chat_id,
 from_chat_id = from_chat_id,
-message_ids = luatele_function.vectorize(message_ids),
+message_ids = functionDo.vectorize(message_ids),
 disable_notification = disable_notification,
 from_background = from_background,
 as_album = as_album,
@@ -945,42 +951,42 @@ send_copy = send_copy,
 remove_caption = remove_caption
 }
 end
-function luatele_function.sendChatSetTtlMessage(chat_id, ttl)
-return function_core.run_table{
-luatele = 'sendChatSetTtlMessage',
+function functionDo.sendChatSetTtlMessage(chat_id, ttl)
+return functionCo.run_table{
+tdbot = 'sendChatSetTtlMessage',
 chat_id = chat_id,
 ttl = ttl
 }
 end
-function luatele_function.sendChatScreenshotTakenNotification(chat_id)
-return function_core.run_table{
-luatele = 'sendChatScreenshotTakenNotification',
+function functionDo.sendChatScreenshotTakenNotification(chat_id)
+return functionCo.run_table{
+tdbot = 'sendChatScreenshotTakenNotification',
 chat_id = chat_id
 }
 end
-function luatele_function.deleteMessages(chat_id, message_ids, revoke)
-return function_core.run_table{
-luatele = 'deleteMessages',
+function functionDo.deleteMessages(chat_id, message_ids, revoke)
+return functionCo.run_table{
+tdbot = 'deleteMessages',
 chat_id = chat_id,
-message_ids = luatele_function.vectorize(message_ids),
+message_ids = functionDo.vectorize(message_ids),
 revoke = revoke
 }
 end
-function luatele_function.deleteChatMessagesFromUser(chat_id, user_id)
-return function_core.run_table{
-luatele = 'deleteChatMessagesFromUser',
+function functionDo.deleteChatMessagesFromUser(chat_id, user_id)
+return functionCo.run_table{
+tdbot = 'deleteChatMessagesFromUser',
 chat_id = chat_id,
 user_id = user_id
 }
 end
-function luatele_function.editMessageText(chat_id, message_id, text, parse_mode, disable_web_page_preview, clear_draft, reply_markup)
-local luatele_body = {
-luatele = 'editMessageText',
+function functionDo.editMessageText(chat_id, message_id, text, parse_mode, disable_web_page_preview, clear_draft, reply_markup)
+local tdbot_body = {
+tdbot = 'editMessageText',
 chat_id = chat_id,
 message_id = message_id,
 reply_markup = reply_markup,
 input_message_content = {
-luatele = 'inputMessageText',
+tdbot = 'inputMessageText',
 disable_web_page_preview = disable_web_page_preview,
 text = {
   text = text
@@ -989,48 +995,48 @@ clear_draft = clear_draft
 }
 }
 if parse_mode then
-luatele_body.input_message_content.text = luatele_function.parseTextEntities(text, parse_mode)
+tdbot_body.input_message_content.text = functionDo.parseTextEntities(text, parse_mode)
 end
-return function_core.run_table(luatele_body)
+return functionCo.run_table(tdbot_body)
 end
-function luatele_function.editMessageCaption(chat_id, message_id, caption, parse_mode, reply_markup)
-local luatele_body = {
-luatele = 'editMessageCaption',
+function functionDo.editMessageCaption(chat_id, message_id, caption, parse_mode, reply_markup)
+local tdbot_body = {
+tdbot = 'editMessageCaption',
 chat_id = chat_id,
 message_id = message_id,
 reply_markup = reply_markup,
 caption = caption
 }
 if parse_mode then
-luatele_body.caption = luatele_function.parseTextEntities(text,parse_mode)
+tdbot_body.caption = functionDo.parseTextEntities(text,parse_mode)
 end
-return function_core.run_table(luatele_body)
+return functionCo.run_table(tdbot_body)
 end
-function luatele_function.getTextEntities(text)
-return function_core.run_table{
-luatele = 'getTextEntities',
+function functionDo.getTextEntities(text)
+return functionCo.run_table{
+tdbot = 'getTextEntities',
 text = tostring(text)
 }
 end
-function luatele_function.getFileMimeType(file_name)
-return function_core.run_table{
-luatele = 'getFileMimeType',
+function functionDo.getFileMimeType(file_name)
+return functionCo.run_table{
+tdbot = 'getFileMimeType',
 file_name = tostring(file_name)
 }
 end
-function luatele_function.getFileExtension(mime_type)
-return function_core.run_table{
-luatele = 'getFileExtension',
+function functionDo.getFileExtension(mime_type)
+return functionCo.run_table{
+tdbot = 'getFileExtension',
 mime_type = tostring(mime_type)
 }
 end
-function luatele_function.getInlineQueryResults(bot_user_id, chat_id, latitude, longitude, query, offset)
-return function_core.run_table{
-luatele = 'getInlineQueryResults',
+function functionDo.getInlineQueryResults(bot_user_id, chat_id, latitude, longitude, query, offset)
+return functionCo.run_table{
+tdbot = 'getInlineQueryResults',
 bot_user_id = bot_user_id,
 chat_id = chat_id,
 user_location = {
-luatele = 'location',
+tdbot = 'location',
 latitude = latitude,
 longitude = longitude
 },
@@ -1038,9 +1044,9 @@ query = tostring(query),
 offset = tostring(offset)
 }
 end
-function luatele_function.answerCallbackQuery(callback_query_id, text, show_alert, url, cache_time)
-return function_core.run_table{
-luatele = 'answerCallbackQuery',
+function functionDo.answerCallbackQuery(callback_query_id, text, show_alert, url, cache_time)
+return functionCo.run_table{
+tdbot = 'answerCallbackQuery',
   callback_query_id = callback_query_id,
   show_alert = show_alert,
   cache_time = cache_time,
@@ -1048,125 +1054,125 @@ luatele = 'answerCallbackQuery',
   url = url,
 }
 end
-function luatele_function.getCallbackQueryAnswer(chat_id, message_id, payload, data, game_short_name)
-return function_core.run_table{
-luatele = 'getCallbackQueryAnswer',
+function functionDo.getCallbackQueryAnswer(chat_id, message_id, payload, data, game_short_name)
+return functionCo.run_table{
+tdbot = 'getCallbackQueryAnswer',
 chat_id = chat_id,
 message_id = message_id,
 payload = {
-luatele = 'callbackQueryPayload' .. payload,
+tdbot = 'callbackQueryPayload' .. payload,
 data = data,
 game_short_name = game_short_name
 }
 }
 end
-function luatele_function.deleteChatReplyMarkup(chat_id, message_id)
-return function_core.run_table{
-luatele = 'deleteChatReplyMarkup',
+function functionDo.deleteChatReplyMarkup(chat_id, message_id)
+return functionCo.run_table{
+tdbot = 'deleteChatReplyMarkup',
 chat_id = chat_id,
 message_id = message_id
 }
 end
-function luatele_function.sendChatAction(chat_id, action, progress)
-return function_core.run_table{
-luatele = 'sendChatAction',
+function functionDo.sendChatAction(chat_id, action, progress)
+return functionCo.run_table{
+tdbot = 'sendChatAction',
 chat_id = chat_id,
 action = {
-luatele = 'chatAction' .. action,
+tdbot = 'chatAction' .. action,
 progress = progress or 100
 }
 }
 end
-function luatele_function.openChat(chat_id)
-return function_core.run_table{
-luatele = 'openChat',
+function functionDo.openChat(chat_id)
+return functionCo.run_table{
+tdbot = 'openChat',
 chat_id = chat_id
 }
 end
-function luatele_function.closeChat(chat_id)
-return function_core.run_table{
-luatele = 'closeChat',
+function functionDo.closeChat(chat_id)
+return functionCo.run_table{
+tdbot = 'closeChat',
 chat_id = chat_id
 }
 end
-function luatele_function.viewMessages(chat_id, message_ids, force_read)
-return function_core.run_table{
-luatele = 'viewMessages',
+function functionDo.viewMessages(chat_id, message_ids, force_read)
+return functionCo.run_table{
+tdbot = 'viewMessages',
 chat_id = chat_id,
-message_ids = luatele_function.vectorize(message_ids),
+message_ids = functionDo.vectorize(message_ids),
 force_read = force_read
 }
 end
-function luatele_function.openMessageContent(chat_id, message_id)
-return function_core.run_table{
-luatele = 'openMessageContent',
+function functionDo.openMessageContent(chat_id, message_id)
+return functionCo.run_table{
+tdbot = 'openMessageContent',
 chat_id = chat_id,
 message_id = message_id
 }
 end
-function luatele_function.readAllChatMentions(chat_id)
-return function_core.run_table{
-luatele = 'readAllChatMentions',
+function functionDo.readAllChatMentions(chat_id)
+return functionCo.run_table{
+tdbot = 'readAllChatMentions',
 chat_id = chat_id
 }
 end
-function luatele_function.createPrivateChat(user_id, force)
-return function_core.run_table{
-luatele = 'createPrivateChat',
+function functionDo.createPrivateChat(user_id, force)
+return functionCo.run_table{
+tdbot = 'createPrivateChat',
 user_id = user_id,
 force = force
 }
 end
-function luatele_function.createBasicGroupChat(basic_group_id, force)
-return function_core.run_table{
-luatele = 'createBasicGroupChat',
-basic_group_id = luatele_function.getChatId(basic_group_id).id,
+function functionDo.createBasicGroupChat(basic_group_id, force)
+return functionCo.run_table{
+tdbot = 'createBasicGroupChat',
+basic_group_id = functionDo.getChatId(basic_group_id).id,
 force = force
 }
 end
-function luatele_function.createSupergroupChat(supergroup_id, force)
-return function_core.run_table{
-luatele = 'createSupergroupChat',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+function functionDo.createSupergroupChat(supergroup_id, force)
+return functionCo.run_table{
+tdbot = 'createSupergroupChat',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 force = force
 }
 end
-function luatele_function.createSecretChat(secret_chat_id)
-return function_core.run_table{
-luatele = 'createSecretChat',
+function functionDo.createSecretChat(secret_chat_id)
+return functionCo.run_table{
+tdbot = 'createSecretChat',
 secret_chat_id = secret_chat_id
 }
 end
-function luatele_function.createNewBasicGroupChat(user_ids, title)
-return function_core.run_table{
-luatele = 'createNewBasicGroupChat',
-user_ids = luatele_function.vectorize(user_ids),
+function functionDo.createNewBasicGroupChat(user_ids, title)
+return functionCo.run_table{
+tdbot = 'createNewBasicGroupChat',
+user_ids = functionDo.vectorize(user_ids),
 title = tostring(title)
 }
 end
-function luatele_function.createNewSupergroupChat(title, is_channel, description)
-return function_core.run_table{
-luatele = 'createNewSupergroupChat',
+function functionDo.createNewSupergroupChat(title, is_channel, description)
+return functionCo.run_table{
+tdbot = 'createNewSupergroupChat',
 title = tostring(title),
 is_channel = is_channel,
 description = tostring(description)
 }
 end
-function luatele_function.createNewSecretChat(user_id)
-return function_core.run_table{
-luatele = 'createNewSecretChat',
+function functionDo.createNewSecretChat(user_id)
+return functionCo.run_table{
+tdbot = 'createNewSecretChat',
 user_id = tonumber(user_id)
 }
 end
-function luatele_function.upgradeBasicGroupChatToSupergroupChat(chat_id)
-return function_core.run_table{
-luatele = 'upgradeBasicGroupChatToSupergroupChat',
+function functionDo.upgradeBasicGroupChatToSupergroupChat(chat_id)
+return functionCo.run_table{
+tdbot = 'upgradeBasicGroupChatToSupergroupChat',
 chat_id = chat_id
 }
 end
-function luatele_function.setChatPermissions(chat_id, can_send_messages, can_send_media_messages, can_send_polls, can_send_other_messages, can_add_web_page_previews, can_change_info, can_invite_users, can_pin_messages)
-return function_core.run_table{
-luatele = 'setChatPermissions',
+function functionDo.setChatPermissions(chat_id, can_send_messages, can_send_media_messages, can_send_polls, can_send_other_messages, can_add_web_page_previews, can_change_info, can_invite_users, can_pin_messages)
+return functionCo.run_table{
+tdbot = 'setChatPermissions',
 chat_id = chat_id,
  permissions = {
 can_send_messages = can_send_messages,
@@ -1180,29 +1186,29 @@ can_pin_messages = can_pin_messages,
 }
 }
 end
-function luatele_function.setChatTitle(chat_id, title)
-return function_core.run_table{
-luatele = 'setChatTitle',
+function functionDo.setChatTitle(chat_id, title)
+return functionCo.run_table{
+tdbot = 'setChatTitle',
 chat_id = chat_id,
 title = tostring(title)
 }
 end
-function luatele_function.setChatPhoto(chat_id, photo)
-return function_core.run_table{
-luatele = 'setChatPhoto',
+function functionDo.setChatPhoto(chat_id, photo)
+return functionCo.run_table{
+tdbot = 'setChatPhoto',
 chat_id = chat_id,
-photo = {luatele = 'inputChatPhotoStatic', photo = getInputFile(photo)}
+photo = {tdbot = 'inputChatPhotoStatic', photo = getInputFile(photo)}
 }
 end 
-function luatele_function.setChatDraftMessage(chat_id, reply_to_message_id, text, parse_mode, disable_web_page_preview, clear_draft)
-local luatele_body = {
-luatele = 'setChatDraftMessage',
+function functionDo.setChatDraftMessage(chat_id, reply_to_message_id, text, parse_mode, disable_web_page_preview, clear_draft)
+local tdbot_body = {
+tdbot = 'setChatDraftMessage',
 chat_id = chat_id,
 draft_message = {
-luatele = 'draftMessage',
+tdbot = 'draftMessage',
 reply_to_message_id = reply_to_message_id,
 input_message_text = {
-luatele = 'inputMessageText',
+tdbot = 'inputMessageText',
   disable_web_page_preview = disable_web_page_preview,
   text = {text = text},
   clear_draft = clear_draft
@@ -1210,50 +1216,50 @@ luatele = 'inputMessageText',
 }
 }
 if parse_mode then
-luatele_body.draft_message.input_message_text.text = luatele_function.parseTextEntities(text, parse_mode)
+tdbot_body.draft_message.input_message_text.text = functionDo.parseTextEntities(text, parse_mode)
 end
-return function_core.run_table(luatele_body)
+return functionCo.run_table(tdbot_body)
 end
-function luatele_function.toggleChatIsPinned(chat_id, is_pinned)
-return function_core.run_table{
-luatele = 'toggleChatIsPinned',
+function functionDo.toggleChatIsPinned(chat_id, is_pinned)
+return functionCo.run_table{
+tdbot = 'toggleChatIsPinned',
 chat_id = chat_id,
 is_pinned = is_pinned
 }
 end
-function luatele_function.setChatClientData(chat_id, client_data)
-return function_core.run_table{
-luatele = 'setChatClientData',
+function functionDo.setChatClientData(chat_id, client_data)
+return functionCo.run_table{
+tdbot = 'setChatClientData',
 chat_id = chat_id,
 client_data = tostring(client_data)
 }
 end
-function luatele_function.addChatMember(chat_id, user_id, forward_limit)
-return function_core.run_table{
-luatele = 'addChatMember',
+function functionDo.addChatMember(chat_id, user_id, forward_limit)
+return functionCo.run_table{
+tdbot = 'addChatMember',
 chat_id = chat_id,
 user_id = user_id,
-forward_limit = luatele_function.setLimit(300, forward_limit)
+forward_limit = functionDo.setLimit(300, forward_limit)
 }
 end
-function luatele_function.addChatMembers(chat_id, user_ids)
-return function_core.run_table{
-luatele = 'addChatMembers',
+function functionDo.addChatMembers(chat_id, user_ids)
+return functionCo.run_table{
+tdbot = 'addChatMembers',
 chat_id = chat_id,
-user_ids = luatele_function.vectorize(user_ids)
+user_ids = functionDo.vectorize(user_ids)
 }
 end
-function luatele_function.setChatMemberStatus(chat_id, user_id, status, right)
-local right = right and luatele_function.vectorize(right) or {}
+function functionDo.setChatMemberStatus(chat_id, user_id, status, right)
+local right = right and functionDo.vectorize(right) or {}
 local status = string.lower(status)
 if status == 'creator' then
 chat_member_status = {
-luatele = 'chatMemberStatusCreator',
+tdbot = 'chatMemberStatusCreator',
 is_member = right[1] or 1
 }
 elseif status == 'administrator' then
 chat_member_status = {
-luatele = 'chatMemberStatusAdministrator',
+tdbot = 'chatMemberStatusAdministrator',
 can_be_edited = right[1] or 1,
 can_change_info = right[2] or 0,
 can_post_messages = right[3] or 1,
@@ -1271,7 +1277,7 @@ custom_title = tostring(right[13]) or ''
 elseif status == 'restricted' then
 chat_member_status = {
 permissions = {
-luatele = 'chatPermissions',
+tdbot = 'chatPermissions',
   can_send_polls = right[2] or 0,
   can_add_web_page_previews = right[3] or 1,
   can_change_info = right[4] or 0,
@@ -1283,24 +1289,24 @@ luatele = 'chatPermissions',
 },
 is_member = right[1] or 1,
 restricted_until_date = right[10] or 0,
-luatele = 'chatMemberStatusRestricted'
+tdbot = 'chatMemberStatusRestricted'
 }
 elseif status == 'banned' then
 chat_member_status = {
-luatele = 'chatMemberStatusBanned',
+tdbot = 'chatMemberStatusBanned',
 banned_until_date = right[1] or 0
 }
 end
-return function_core.run_table{
-luatele = 'setChatMemberStatus',
+return functionCo.run_table{
+tdbot = 'setChatMemberStatus',
 chat_id = chat_id,
 member_id = {_='messageSenderUser', user_id = user_id},
 status = chat_member_status or {}
 }
 end
-function luatele_function.SetAdmin(chat_id, user_id,right)
+function functionDo.SetAdmin(chat_id, user_id,right)
 chat_member_status = {
-luatele = 'chatMemberStatusAdministrator',
+tdbot = 'chatMemberStatusAdministrator',
 can_be_edited = right[1] or 1,
 can_change_info = right[2] or 1,
 can_post_messages = right[3] or 1,
@@ -1315,81 +1321,81 @@ can_manage_chat = right[11] or 1,
 can_promote_members = right[12] or 0,
 custom_title = tostring(right[13]) or ''
 }
-return function_core.run_table{
-luatele = 'setChatMemberStatus',
+return functionCo.run_table{
+tdbot = 'setChatMemberStatus',
 chat_id = chat_id,
 member_id = {_='messageSenderUser', user_id = user_id},
 status = chat_member_status or {}
 }
 end
 
-function luatele_function.getChatMember(chat_id, user_id)
-return function_core.run_table{
-luatele = 'getChatMember',
+function functionDo.getChatMember(chat_id, user_id)
+return functionCo.run_table{
+tdbot = 'getChatMember',
 chat_id = chat_id,
 member_id = {_='messageSenderUser', user_id = user_id}
 }
 end 
-function luatele_function.searchChatMembers(chat_id, query, limit)
-return function_core.run_table{
-luatele = 'searchChatMembers',
+function functionDo.searchChatMembers(chat_id, query, limit)
+return functionCo.run_table{
+tdbot = 'searchChatMembers',
 chat_id = chat_id,
 query = tostring(query),
-limit = luatele_function.setLimit(200, limit)
+limit = functionDo.setLimit(200, limit)
 }
 end
-function luatele_function.getChatAdministrators(chat_id)
-return function_core.run_table{
-luatele = 'getChatAdministrators',
+function functionDo.getChatAdministrators(chat_id)
+return functionCo.run_table{
+tdbot = 'getChatAdministrators',
 chat_id = chat_id
 }
 end
-function luatele_function.setPinnedChats(chat_ids)
-return function_core.run_table{
-luatele = 'setPinnedChats',
-chat_ids = luatele_function.vectorize(chat_ids)
+function functionDo.setPinnedChats(chat_ids)
+return functionCo.run_table{
+tdbot = 'setPinnedChats',
+chat_ids = functionDo.vectorize(chat_ids)
 }
 end
-function luatele_function.downloadFile(file_id, priority)
-return function_core.run_table{
-luatele = 'downloadFile',
+function functionDo.downloadFile(file_id, priority)
+return functionCo.run_table{
+tdbot = 'downloadFile',
 file_id = file_id,
 priority = priority or 32
 }
 end
-function luatele_function.cancelDownloadFile(file_id, only_if_pending)
-return function_core.run_table{
-luatele = 'cancelDownloadFile',
+function functionDo.cancelDownloadFile(file_id, only_if_pending)
+return functionCo.run_table{
+tdbot = 'cancelDownloadFile',
 file_id = file_id,
 only_if_pending = only_if_pending
 }
 end
-function luatele_function.uploadFile(file, file_type, priority)
+function functionDo.uploadFile(file, file_type, priority)
 local ftype = file_type or 'Unknown'
-return function_core.run_table{
-luatele = 'uploadFile',
-file = luatele_function.getInputFile(file),
+return functionCo.run_table{
+tdbot = 'uploadFile',
+file = functionDo.getInputFile(file),
 file_type = {
-luatele = 'fileType' .. ftype
+tdbot = 'fileType' .. ftype
 },
 priority = priority or 32
 }
 end
-function luatele_function.cancelUploadFile(file_id)
-return function_core.run_table{
-luatele = 'cancelUploadFile',
+function functionDo.cancelUploadFile(file_id)
+return functionCo.run_table{
+tdbot = 'cancelUploadFile',
 file_id = file_id
 }
 end
-function luatele_function.deleteFile(file_id)
-return function_core.run_table{
-luatele = 'deleteFile',
+function functionDo.deleteFile(file_id)
+return functionCo.run_table{
+tdbot = 'deleteFile',
 file_id = file_id
 }
 end
-function luatele_function.generateChatInviteLink(chat_id,name,expire_date,member_limit,creates_join_request)
-return function_core.run_table{
-luatele = 'createChatInviteLink',
+function functionDo.generateChatInviteLink(chat_id,name,expire_date,member_limit,creates_join_request)
+return functionCo.run_table{
+tdbot = 'createChatInviteLink',
 chat_id = chat_id,
 name = tostring(name),
 expire_date = tonumber(expire_date),
@@ -1397,12 +1403,12 @@ member_limit = tonumber(member_limit),
 creates_join_request = creates_join_request
 }
 end 
-function luatele_function.joinChatByUsernam(username)
+function functionDo.joinChatByUsernam(username)
 if type(username) == 'string' and 5 <= #username then
-local result = luatele_function.searchPublicChat(username)
-if result.type and result.type.luatele == 'chatTypeSupergroup' then
-return function_core.run_table{
-luatele = 'joinChat',
+local result = functionDo.searchPublicChat(username)
+if result.type and result.type.tdbot == 'chatTypeSupergroup' then
+return functionCo.run_table{
+tdbot = 'joinChat',
   chat_id = result.id
 }
 else
@@ -1410,30 +1416,30 @@ return result
 end
 end
 end
-function luatele_function.checkChatInviteLink(invite_link)
-return function_core.run_table{
-luatele = 'checkChatInviteLink',
+function functionDo.checkChatInviteLink(invite_link)
+return functionCo.run_table{
+tdbot = 'checkChatInviteLink',
 invite_link = tostring(invite_link)
 }
 end
-function luatele_function.joinChatByInviteLink(invite_link)
-return function_core.run_table{
-luatele = 'joinChatByInviteLink',
+function functionDo.joinChatByInviteLink(invite_link)
+return functionCo.run_table{
+tdbot = 'joinChatByInviteLink',
 invite_link = tostring(invite_link)
 }
 end
-function luatele_function.leaveChat(chat_id)
-return function_core.run_table{
-luatele = 'leaveChat',
+function functionDo.leaveChat(chat_id)
+return functionCo.run_table{
+tdbot = 'leaveChat',
 chat_id = chat_id
 }
 end
-function luatele_function.createCall(user_id, udp_p2p, udp_reflector, min_layer, max_layer)
-return function_core.run_table{
-luatele = 'createCall',
+function functionDo.createCall(user_id, udp_p2p, udp_reflector, min_layer, max_layer)
+return functionCo.run_table{
+tdbot = 'createCall',
 user_id = user_id,
 protocol = {
-luatele = 'callProtocol',
+tdbot = 'callProtocol',
 udp_p2p = udp_p2p,
 udp_reflector = udp_reflector,
 min_layer = min_layer or 65,
@@ -1441,12 +1447,12 @@ max_layer = max_layer or 65
 }
 }
 end
-function luatele_function.acceptCall(call_id, udp_p2p, udp_reflector, min_layer, max_layer)
-return function_core.run_table{
-luatele = 'acceptCall',
+function functionDo.acceptCall(call_id, udp_p2p, udp_reflector, min_layer, max_layer)
+return functionCo.run_table{
+tdbot = 'acceptCall',
 call_id = call_id,
 protocol = {
-luatele = 'callProtocol',
+tdbot = 'callProtocol',
 udp_p2p = udp_p2p,
 udp_reflector = udp_reflector,
 min_layer = min_layer or 65,
@@ -1454,69 +1460,69 @@ max_layer = max_layer or 65
 }
 }
 end
-function luatele_function.blockUser(user_id)
-return function_core.run_table{
-luatele = 'blockUser',
+function functionDo.blockUser(user_id)
+return functionCo.run_table{
+tdbot = 'blockUser',
 user_id = user_id
 }
 end
-function luatele_function.unblockUser(user_id)
-return function_core.run_table{
-luatele = 'unblockUser',
+function functionDo.unblockUser(user_id)
+return functionCo.run_table{
+tdbot = 'unblockUser',
 user_id = user_id
 }
 end
-function luatele_function.getBlockedUsers(offset, limit)
-return function_core.run_table{
-luatele = 'getBlockedUsers',
+function functionDo.getBlockedUsers(offset, limit)
+return functionCo.run_table{
+tdbot = 'getBlockedUsers',
 offset = offset or 0,
-limit = luatele_function.setLimit(100, limit)
+limit = functionDo.setLimit(100, limit)
 }
 end
-function luatele_function.getContacts()
-return function_core.run_table{
-luatele = 'getContacts'
+function functionDo.getContacts()
+return functionCo.run_table{
+tdbot = 'getContacts'
 }
 end
-function luatele_function.importContacts(contacts)
+function functionDo.importContacts(contacts)
 local result = {}
   for key, value in pairs(contacts) do
 result[#result + 1] = {
-luatele = 'contact',
+tdbot = 'contact',
 phone_number = tostring(value.phone_number),
 first_name = tostring(value.first_name),
 last_name = tostring(value.last_name),
 user_id = value.user_id or 0
 }
 end
-return function_core.run_table{
-luatele = 'importContacts',
+return functionCo.run_table{
+tdbot = 'importContacts',
 contacts = result
 }
 end
-function luatele_function.searchContacts(query, limit)
-return function_core.run_table{
-luatele = 'searchContacts',
+function functionDo.searchContacts(query, limit)
+return functionCo.run_table{
+tdbot = 'searchContacts',
 query = tostring(query),
 limit = limit
 }
 end
-function luatele_function.removeContacts(user_ids)
-return function_core.run_table{
-luatele = 'removeContacts',
-user_ids = luatele_function.vectorize(user_ids)
+function functionDo.removeContacts(user_ids)
+return functionCo.run_table{
+tdbot = 'removeContacts',
+user_ids = functionDo.vectorize(user_ids)
 }
 end
-function luatele_function.getImportedContactCount()
-return function_core.run_table{
-luatele = 'getImportedContactCount'
+function functionDo.getImportedContactCount()
+return functionCo.run_table{
+tdbot = 'getImportedContactCount'
 }
 end
-function luatele_function.changeImportedContacts(phone_number, first_name, last_name, user_id)
-return function_core.run_table{
-luatele = 'changeImportedContacts',
+function functionDo.changeImportedContacts(phone_number, first_name, last_name, user_id)
+return functionCo.run_table{
+tdbot = 'changeImportedContacts',
 contacts = {
-luatele = 'contact',
+tdbot = 'contact',
 phone_number = tostring(phone_number),
 first_name = tostring(first_name),
 last_name = tostring(last_name),
@@ -1524,373 +1530,373 @@ user_id = user_id or 0
 }
 }
 end
-function luatele_function.clearImportedContacts()
-return function_core.run_table{
-luatele = 'clearImportedContacts'
+function functionDo.clearImportedContacts()
+return functionCo.run_table{
+tdbot = 'clearImportedContacts'
 }
 end
-function luatele_function.getUserProfilePhotos(user_id, offset, limit)
-return function_core.run_table{
-luatele = 'getUserProfilePhotos',
+function functionDo.getUserProfilePhotos(user_id, offset, limit)
+return functionCo.run_table{
+tdbot = 'getUserProfilePhotos',
 user_id = user_id,
 offset = offset or 0,
-limit = luatele_function.setLimit(100, limit)
+limit = functionDo.setLimit(100, limit)
 }
 end
-function luatele_function.getStickers(emoji, limit)
-return function_core.run_table{
-luatele = 'getStickers',
+function functionDo.getStickers(emoji, limit)
+return functionCo.run_table{
+tdbot = 'getStickers',
 emoji = tostring(emoji),
-limit = luatele_function.setLimit(100, limit)
+limit = functionDo.setLimit(100, limit)
 }
 end
-function luatele_function.searchStickers(emoji, limit)
-return function_core.run_table{
-luatele = 'searchStickers',
+function functionDo.searchStickers(emoji, limit)
+return functionCo.run_table{
+tdbot = 'searchStickers',
 emoji = tostring(emoji),
 limit = limit
 }
 end
-function luatele_function.getArchivedStickerSets(is_masks, offset_sticker_set_id, limit)
-return function_core.run_table{
-luatele = 'getArchivedStickerSets',
+function functionDo.getArchivedStickerSets(is_masks, offset_sticker_set_id, limit)
+return functionCo.run_table{
+tdbot = 'getArchivedStickerSets',
 is_masks = is_masks,
 offset_sticker_set_id = offset_sticker_set_id,
 limit = limit
 }
 end
-function luatele_function.getTrendingStickerSets()
-return function_core.run_table{
-luatele = 'getTrendingStickerSets'
+function functionDo.getTrendingStickerSets()
+return functionCo.run_table{
+tdbot = 'getTrendingStickerSets'
 }
 end
-function luatele_function.getAttachedStickerSets(file_id)
-return function_core.run_table{
-luatele = 'getAttachedStickerSets',
+function functionDo.getAttachedStickerSets(file_id)
+return functionCo.run_table{
+tdbot = 'getAttachedStickerSets',
 file_id = file_id
 }
 end
-function luatele_function.getStickerSet(set_id)
-return function_core.run_table{
-luatele = 'getStickerSet',
+function functionDo.getStickerSet(set_id)
+return functionCo.run_table{
+tdbot = 'getStickerSet',
 set_id = set_id
 }
 end
-function luatele_function.searchStickerSet(name)
-return function_core.run_table{
-luatele = 'searchStickerSet',
+function functionDo.searchStickerSet(name)
+return functionCo.run_table{
+tdbot = 'searchStickerSet',
 name = tostring(name)
 }
 end
-function luatele_function.searchInstalledStickerSets(is_masks, query, limit)
-return function_core.run_table{
-luatele = 'searchInstalledStickerSets',
+function functionDo.searchInstalledStickerSets(is_masks, query, limit)
+return functionCo.run_table{
+tdbot = 'searchInstalledStickerSets',
 is_masks = is_masks,
 query = tostring(query),
 limit = limit
 }
 end
-function luatele_function.searchStickerSets(query)
-return function_core.run_table{
-luatele = 'searchStickerSets',
+function functionDo.searchStickerSets(query)
+return functionCo.run_table{
+tdbot = 'searchStickerSets',
 query = tostring(query)
 }
 end
-function luatele_function.changeStickerSet(set_id, is_installed, is_archived)
-return function_core.run_table{
-luatele = 'changeStickerSet',
+function functionDo.changeStickerSet(set_id, is_installed, is_archived)
+return functionCo.run_table{
+tdbot = 'changeStickerSet',
 set_id = set_id,
 is_installed = is_installed,
 is_archived = is_archived
 }
 end
-function luatele_function.viewTrendingStickerSets(sticker_set_ids)
-return function_core.run_table{
-luatele = 'viewTrendingStickerSets',
-sticker_set_ids = luatele_function.vectorize(sticker_set_ids)
+function functionDo.viewTrendingStickerSets(sticker_set_ids)
+return functionCo.run_table{
+tdbot = 'viewTrendingStickerSets',
+sticker_set_ids = functionDo.vectorize(sticker_set_ids)
 }
 end
-function luatele_function.reorderInstalledStickerSets(is_masks, sticker_set_ids)
-return function_core.run_table{
-luatele = 'reorderInstalledStickerSets',
+function functionDo.reorderInstalledStickerSets(is_masks, sticker_set_ids)
+return functionCo.run_table{
+tdbot = 'reorderInstalledStickerSets',
 is_masks = is_masks,
-sticker_set_ids = luatele_function.vectorize(sticker_set_ids)
+sticker_set_ids = functionDo.vectorize(sticker_set_ids)
 }
 end
-function luatele_function.getRecentStickers(is_attached)
-return function_core.run_table{
-luatele = 'getRecentStickers',
+function functionDo.getRecentStickers(is_attached)
+return functionCo.run_table{
+tdbot = 'getRecentStickers',
 is_attached = is_attached
 }
 end
-function luatele_function.addRecentSticker(is_attached, sticker)
-return function_core.run_table{
-luatele = 'addRecentSticker',
+function functionDo.addRecentSticker(is_attached, sticker)
+return functionCo.run_table{
+tdbot = 'addRecentSticker',
 is_attached = is_attached,
-sticker = luatele_function.getInputFile(sticker)
+sticker = functionDo.getInputFile(sticker)
 }
 end
-function luatele_function.clearRecentStickers(is_attached)
-return function_core.run_table{
-luatele = 'clearRecentStickers',
+function functionDo.clearRecentStickers(is_attached)
+return functionCo.run_table{
+tdbot = 'clearRecentStickers',
 is_attached = is_attached
 }
 end
-function luatele_function.getFavoriteStickers()
-return function_core.run_table{
-luatele = 'getFavoriteStickers'
+function functionDo.getFavoriteStickers()
+return functionCo.run_table{
+tdbot = 'getFavoriteStickers'
 }
 end
-function luatele_function.addFavoriteSticker(sticker)
-return function_core.run_table{
-luatele = 'addFavoriteSticker',
-sticker = luatele_function.getInputFile(sticker)
+function functionDo.addFavoriteSticker(sticker)
+return functionCo.run_table{
+tdbot = 'addFavoriteSticker',
+sticker = functionDo.getInputFile(sticker)
 }
 end
-function luatele_function.removeFavoriteSticker(sticker)
-return function_core.run_table{
-luatele = 'removeFavoriteSticker',
-sticker = luatele_function.getInputFile(sticker)
+function functionDo.removeFavoriteSticker(sticker)
+return functionCo.run_table{
+tdbot = 'removeFavoriteSticker',
+sticker = functionDo.getInputFile(sticker)
 }
 end
-function luatele_function.getStickerEmojis(sticker)
-return function_core.run_table{
-luatele = 'getStickerEmojis',
-sticker = luatele_function.getInputFile(sticker)
+function functionDo.getStickerEmojis(sticker)
+return functionCo.run_table{
+tdbot = 'getStickerEmojis',
+sticker = functionDo.getInputFile(sticker)
 }
 end
-function luatele_function.getSavedAnimations()
-return function_core.run_table{
-luatele = 'getSavedAnimations'
+function functionDo.getSavedAnimations()
+return functionCo.run_table{
+tdbot = 'getSavedAnimations'
 }
 end
-function luatele_function.addSavedAnimation(animation)
-return function_core.run_table{
-luatele = 'addSavedAnimation',
-animation = luatele_function.getInputFile(animation)
+function functionDo.addSavedAnimation(animation)
+return functionCo.run_table{
+tdbot = 'addSavedAnimation',
+animation = functionDo.getInputFile(animation)
 }
 end
-function luatele_function.removeSavedAnimation(animation)
-return function_core.run_table{
-luatele = 'removeSavedAnimation',
-animation = luatele_function.getInputFile(animation)
+function functionDo.removeSavedAnimation(animation)
+return functionCo.run_table{
+tdbot = 'removeSavedAnimation',
+animation = functionDo.getInputFile(animation)
 }
 end
-function luatele_function.getRecentInlineBots()
-return function_core.run_table{
-luatele = 'getRecentInlineBots'
+function functionDo.getRecentInlineBots()
+return functionCo.run_table{
+tdbot = 'getRecentInlineBots'
 }
 end
-function luatele_function.searchHashtags(prefix, limit)
-return function_core.run_table{
-luatele = 'searchHashtags',
+function functionDo.searchHashtags(prefix, limit)
+return functionCo.run_table{
+tdbot = 'searchHashtags',
 prefix = tostring(prefix),
 limit = limit
 }
 end
-function luatele_function.removeRecentHashtag(hashtag)
-return function_core.run_table{
-luatele = 'removeRecentHashtag',
+function functionDo.removeRecentHashtag(hashtag)
+return functionCo.run_table{
+tdbot = 'removeRecentHashtag',
 hashtag = tostring(hashtag)
 }
 end
-function luatele_function.getWebPagePreview(text)
-return function_core.run_table{
-luatele = 'getWebPagePreview',
+function functionDo.getWebPagePreview(text)
+return functionCo.run_table{
+tdbot = 'getWebPagePreview',
 text = {
 text = text
 }
 }
 end
-function luatele_function.getWebPageInstantView(url, force_full)
-return function_core.run_table{
-luatele = 'getWebPageInstantView',
+function functionDo.getWebPageInstantView(url, force_full)
+return functionCo.run_table{
+tdbot = 'getWebPageInstantView',
 url = tostring(url),
 force_full = force_full
 }
 end
-function luatele_function.getNotificationSettings(scope, chat_id)
-return function_core.run_table{
-luatele = 'getNotificationSettings',
+function functionDo.getNotificationSettings(scope, chat_id)
+return functionCo.run_table{
+tdbot = 'getNotificationSettings',
 scope = {
-luatele = 'notificationSettingsScope' .. scope,
+tdbot = 'notificationSettingsScope' .. scope,
 chat_id = chat_id
 }
 }
 end
-function luatele_function.setNotificationSettings(scope, chat_id, mute_for, sound, show_preview)
-return function_core.run_table{
-luatele = 'setNotificationSettings',
+function functionDo.setNotificationSettings(scope, chat_id, mute_for, sound, show_preview)
+return functionCo.run_table{
+tdbot = 'setNotificationSettings',
 scope = {
-luatele = 'notificationSettingsScope' .. scope,
+tdbot = 'notificationSettingsScope' .. scope,
 chat_id = chat_id
 },
 notification_settings = {
-luatele = 'notificationSettings',
+tdbot = 'notificationSettings',
 mute_for = mute_for,
 sound = tostring(sound),
 show_preview = show_preview
 }
 }
 end
-function luatele_function.resetAllNotificationSettings()
-return function_core.run_table{
-luatele = 'resetAllNotificationSettings'
+function functionDo.resetAllNotificationSettings()
+return functionCo.run_table{
+tdbot = 'resetAllNotificationSettings'
 }
 end
-function luatele_function.setProfilePhoto(photo)
-return function_core.run_table{
-luatele = 'setProfilePhoto',
-photo = luatele_function.getInputFile(photo)
+function functionDo.setProfilePhoto(photo)
+return functionCo.run_table{
+tdbot = 'setProfilePhoto',
+photo = functionDo.getInputFile(photo)
 }
 end
-function luatele_function.deleteProfilePhoto(profile_photo_id)
-return function_core.run_table{
-luatele = 'deleteProfilePhoto',
+function functionDo.deleteProfilePhoto(profile_photo_id)
+return functionCo.run_table{
+tdbot = 'deleteProfilePhoto',
 profile_photo_id = profile_photo_id
 }
 end
-function luatele_function.setName(first_name, last_name)
-return function_core.run_table{
-luatele = 'setName',
+function functionDo.setName(first_name, last_name)
+return functionCo.run_table{
+tdbot = 'setName',
 first_name = tostring(first_name),
 last_name = tostring(last_name)
 }
 end
-function luatele_function.setBio(bio)
-return function_core.run_table{
-luatele = 'setBio',
+function functionDo.setBio(bio)
+return functionCo.run_table{
+tdbot = 'setBio',
 bio = tostring(bio)
 }
 end
-function luatele_function.setUsername(username)
-return function_core.run_table{
-luatele = 'setUsername',
+function functionDo.setUsername(username)
+return functionCo.run_table{
+tdbot = 'setUsername',
 username = tostring(username)
 }
 end
-function luatele_function.getActiveSessions()
-return function_core.run_table{
-luatele = 'getActiveSessions'
+function functionDo.getActiveSessions()
+return functionCo.run_table{
+tdbot = 'getActiveSessions'
 }
 end
-function luatele_function.terminateAllOtherSessions()
-return function_core.run_table{
-luatele = 'terminateAllOtherSessions'
+function functionDo.terminateAllOtherSessions()
+return functionCo.run_table{
+tdbot = 'terminateAllOtherSessions'
 }
 end
-function luatele_function.terminateSession(session_id)
-return function_core.run_table{
-luatele = 'terminateSession',
+function functionDo.terminateSession(session_id)
+return functionCo.run_table{
+tdbot = 'terminateSession',
 session_id = session_id
 }
 end
-function luatele_function.toggleBasicGroupAdministrators(basic_group_id, everyone_is_administrator)
-return function_core.run_table{
-luatele = 'toggleBasicGroupAdministrators',
-basic_group_id = luatele_function.getChatId(basic_group_id).id,
+function functionDo.toggleBasicGroupAdministrators(basic_group_id, everyone_is_administrator)
+return functionCo.run_table{
+tdbot = 'toggleBasicGroupAdministrators',
+basic_group_id = functionDo.getChatId(basic_group_id).id,
 everyone_is_administrator = everyone_is_administrator
 }
 end
-function luatele_function.setSupergroupUsername(supergroup_id, username)
-return function_core.run_table{
-luatele = 'setSupergroupUsername',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+function functionDo.setSupergroupUsername(supergroup_id, username)
+return functionCo.run_table{
+tdbot = 'setSupergroupUsername',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 username = tostring(username)
 }
 end
-function luatele_function.setSupergroupStickerSet(supergroup_id, sticker_set_id)
-return function_core.run_table{
-luatele = 'setSupergroupStickerSet',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+function functionDo.setSupergroupStickerSet(supergroup_id, sticker_set_id)
+return functionCo.run_table{
+tdbot = 'setSupergroupStickerSet',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 sticker_set_id = sticker_set_id
 }
 end
-function luatele_function.toggleSupergroupInvites(supergroup_id, anyone_can_invite)
-return function_core.run_table{
-luatele = 'toggleSupergroupInvites',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+function functionDo.toggleSupergroupInvites(supergroup_id, anyone_can_invite)
+return functionCo.run_table{
+tdbot = 'toggleSupergroupInvites',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 anyone_can_invite = anyone_can_invite
 }
 end
-function luatele_function.toggleSupergroupSignMessages(supergroup_id, sign_messages)
-return function_core.run_table{
-luatele = 'toggleSupergroupSignMessages',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+function functionDo.toggleSupergroupSignMessages(supergroup_id, sign_messages)
+return functionCo.run_table{
+tdbot = 'toggleSupergroupSignMessages',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 sign_messages = sign_messages
 }
 end
-function luatele_function.toggleSupergroupIsAllHistoryAvailable(supergroup_id, is_all_history_available)
-return function_core.run_table{
-luatele = 'toggleSupergroupIsAllHistoryAvailable',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+function functionDo.toggleSupergroupIsAllHistoryAvailable(supergroup_id, is_all_history_available)
+return functionCo.run_table{
+tdbot = 'toggleSupergroupIsAllHistoryAvailable',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 is_all_history_available = is_all_history_available
 }
 end
-function luatele_function.setChatDescription(chat_id, description)
-return function_core.run_table{
-luatele = 'setChatDescription',
+function functionDo.setChatDescription(chat_id, description)
+return functionCo.run_table{
+tdbot = 'setChatDescription',
 chat_id = chat_id,
 description = tostring(description)
 }
 end
-function luatele_function.pinChatMessage(chat_id, message_id, disable_notification)
-return function_core.run_table{
-luatele = 'pinChatMessage',
+function functionDo.pinChatMessage(chat_id, message_id, disable_notification)
+return functionCo.run_table{
+tdbot = 'pinChatMessage',
 chat_id = chat_id,
 message_id = message_id,
 disable_notification = disable_notification
 }
 end
-function luatele_function.unpinChatMessage(chat_id)
-return function_core.run_table{
-luatele = 'unpinChatMessage',
+function functionDo.unpinChatMessage(chat_id)
+return functionCo.run_table{
+tdbot = 'unpinChatMessage',
 chat_id = chat_id
 }
 end
-function luatele_function.reportSupergroupSpam(supergroup_id, user_id, message_ids)
-return function_core.run_table{
-luatele = 'reportSupergroupSpam',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+function functionDo.reportSupergroupSpam(supergroup_id, user_id, message_ids)
+return functionCo.run_table{
+tdbot = 'reportSupergroupSpam',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 user_id = user_id,
-message_ids = luatele_function.vectorize(message_ids)
+message_ids = functionDo.vectorize(message_ids)
 }
 end
-function luatele_function.getSupergroupMembers(supergroup_id, filter, query, offset, limit)
+function functionDo.getSupergroupMembers(supergroup_id, filter, query, offset, limit)
 local filter = filter or 'Recent'
-return function_core.run_table{
-luatele = 'getSupergroupMembers',
-supergroup_id = luatele_function.getChatId(supergroup_id).id,
+return functionCo.run_table{
+tdbot = 'getSupergroupMembers',
+supergroup_id = functionDo.getChatId(supergroup_id).id,
 filter = {
-luatele = 'supergroupMembersFilter' .. filter,
+tdbot = 'supergroupMembersFilter' .. filter,
 query = query
 },
 offset = offset or 0,
-limit = luatele_function.setLimit(200, limit)
+limit = functionDo.setLimit(200, limit)
 }
 end
-function luatele_function.deleteSupergroup(supergroup_id)
-return function_core.run_table{
-luatele = 'deleteSupergroup',
-supergroup_id = luatele_function.getChatId(supergroup_id).id
+function functionDo.deleteSupergroup(supergroup_id)
+return functionCo.run_table{
+tdbot = 'deleteSupergroup',
+supergroup_id = functionDo.getChatId(supergroup_id).id
 }
 end
-function luatele_function.closeSecretChat(secret_chat_id)
-return function_core.run_table{
-luatele = 'closeSecretChat',
+function functionDo.closeSecretChat(secret_chat_id)
+return functionCo.run_table{
+tdbot = 'closeSecretChat',
 secret_chat_id = secret_chat_id
 }
 end
-function luatele_function.getChatEventLog(chat_id, query, from_event_id, limit, filters, user_ids)
+function functionDo.getChatEventLog(chat_id, query, from_event_id, limit, filters, user_ids)
 local filters = filters or {1,1,1,1,1,1,1,1,1,1}
-return function_core.run_table{
-luatele = 'getChatEventLog',
+return functionCo.run_table{
+tdbot = 'getChatEventLog',
 chat_id = chat_id,
 query = tostring(query) or '',
 from_event_id = from_event_id or 0,
-limit = luatele_function.setLimit(100, limit),
+limit = functionDo.setLimit(100, limit),
 filters = {
-luatele = 'chatEventLogFilters',
+tdbot = 'chatEventLogFilters',
 message_edits = filters[0],
 message_deletions = filters[1],
 message_pins = filters[2],
@@ -1902,179 +1908,179 @@ member_restrictions = filters[7],
 info_changes = filters[8],
 setting_changes = filters[9]
 },
-user_ids = luatele_function.vectorize(user_ids)
+user_ids = functionDo.vectorize(user_ids)
 }
 end
-function luatele_function.getSavedOrderInfo()
-return function_core.run_table{
-luatele = 'getSavedOrderInfo'
+function functionDo.getSavedOrderInfo()
+return functionCo.run_table{
+tdbot = 'getSavedOrderInfo'
 }
 end
-function luatele_function.deleteSavedOrderInfo()
-return function_core.run_table{
-luatele = 'deleteSavedOrderInfo'
+function functionDo.deleteSavedOrderInfo()
+return functionCo.run_table{
+tdbot = 'deleteSavedOrderInfo'
 }
 end
-function luatele_function.deleteSavedCredentials()
-return function_core.run_table{
-luatele = 'deleteSavedCredentials'
+function functionDo.deleteSavedCredentials()
+return functionCo.run_table{
+tdbot = 'deleteSavedCredentials'
 }
 end
-function luatele_function.getSupportUser()
-return function_core.run_table{
-luatele = 'getSupportUser'
+function functionDo.getSupportUser()
+return functionCo.run_table{
+tdbot = 'getSupportUser'
 }
 end
-function luatele_function.getWallpapers()
-return function_core.run_table{
-luatele = 'getWallpapers'
+function functionDo.getWallpapers()
+return functionCo.run_table{
+tdbot = 'getWallpapers'
 }
 end
-function luatele_function.setUserPrivacySettingRules(setting, rules, allowed_user_ids, restricted_user_ids)
+function functionDo.setUserPrivacySettingRules(setting, rules, allowed_user_ids, restricted_user_ids)
 local setting_rules = {
 [0] = {
-luatele = 'userPrivacySettingRule' .. rules
+tdbot = 'userPrivacySettingRule' .. rules
 }
 }
 if allowed_user_ids then
 setting_rules[#setting_rules + 1] = {
 {
-luatele = 'userPrivacySettingRuleAllowUsers',
-  user_ids = luatele_function.vectorize(allowed_user_ids)
+tdbot = 'userPrivacySettingRuleAllowUsers',
+  user_ids = functionDo.vectorize(allowed_user_ids)
 }
 }
 elseif restricted_user_ids then
 setting_rules[#setting_rules + 1] = {
 {
-luatele = 'userPrivacySettingRuleRestrictUsers',
-  user_ids = luatele_function.vectorize(restricted_user_ids)
+tdbot = 'userPrivacySettingRuleRestrictUsers',
+  user_ids = functionDo.vectorize(restricted_user_ids)
 }
 }
 end
-return function_core.run_table{
-luatele = 'setUserPrivacySettingRules',
+return functionCo.run_table{
+tdbot = 'setUserPrivacySettingRules',
 setting = {
-luatele = 'userPrivacySetting' .. setting
+tdbot = 'userPrivacySetting' .. setting
 },
 rules = {
-luatele = 'userPrivacySettingRules',
+tdbot = 'userPrivacySettingRules',
 rules = setting_rules
 }
 }
 end
-function luatele_function.getUserPrivacySettingRules(setting)
-return function_core.run_table{
-luatele = 'getUserPrivacySettingRules',
+function functionDo.getUserPrivacySettingRules(setting)
+return functionCo.run_table{
+tdbot = 'getUserPrivacySettingRules',
 setting = {
-luatele = 'userPrivacySetting' .. setting
+tdbot = 'userPrivacySetting' .. setting
 }
 }
 end
-function luatele_function.getOption(name)
-return function_core.run_table{
-luatele = 'getOption',
+function functionDo.getOption(name)
+return functionCo.run_table{
+tdbot = 'getOption',
 name = tostring(name)
 }
 end
-function luatele_function.setOption(name, option_value, value)
-return function_core.run_table{
-luatele = 'setOption',
+function functionDo.setOption(name, option_value, value)
+return functionCo.run_table{
+tdbot = 'setOption',
 name = tostring(name),
 value = {
-luatele = 'optionValue' .. option_value,
+tdbot = 'optionValue' .. option_value,
 value = value
 }
 }
 end
-function luatele_function.setAccountTtl(ttl)
-return function_core.run_table{
-luatele = 'setAccountTtl',
+function functionDo.setAccountTtl(ttl)
+return functionCo.run_table{
+tdbot = 'setAccountTtl',
 ttl = {
-luatele = 'accountTtl',
+tdbot = 'accountTtl',
 days = ttl
 }
 }
 end
-function luatele_function.getAccountTtl()
-return function_core.run_table{
-luatele = 'getAccountTtl'
+function functionDo.getAccountTtl()
+return functionCo.run_table{
+tdbot = 'getAccountTtl'
 }
 end
-function luatele_function.deleteAccount(reason)
-return function_core.run_table{
-luatele = 'deleteAccount',
+function functionDo.deleteAccount(reason)
+return functionCo.run_table{
+tdbot = 'deleteAccount',
 reason = tostring(reason)
 }
 end
-function luatele_function.getChatReportSpamState(chat_id)
-return function_core.run_table{
-luatele = 'getChatReportSpamState',
+function functionDo.getChatReportSpamState(chat_id)
+return functionCo.run_table{
+tdbot = 'getChatReportSpamState',
 chat_id = chat_id
 }
 end
-function luatele_function.reportChat(chat_id, reason, text, message_ids)
-return function_core.run_table{
-luatele = 'reportChat',
+function functionDo.reportChat(chat_id, reason, text, message_ids)
+return functionCo.run_table{
+tdbot = 'reportChat',
 chat_id = chat_id,
 reason = {
-luatele = 'chatReportReason' .. reason,
+tdbot = 'chatReportReason' .. reason,
 text = text
 },
-message_ids = luatele_function.vectorize(message_ids)
+message_ids = functionDo.vectorize(message_ids)
 }
 end
-function luatele_function.getStorageStatistics(chat_limit)
-return function_core.run_table{
-luatele = 'getStorageStatistics',
+function functionDo.getStorageStatistics(chat_limit)
+return functionCo.run_table{
+tdbot = 'getStorageStatistics',
 chat_limit = chat_limit
 }
 end
-function luatele_function.getStorageStatisticsFast()
-return function_core.run_table{
-luatele = 'getStorageStatisticsFast'
+function functionDo.getStorageStatisticsFast()
+return functionCo.run_table{
+tdbot = 'getStorageStatisticsFast'
 }
 end
-function luatele_function.optimizeStorage(size, ttl, count, immunity_delay, file_type, chat_ids, exclude_chat_ids, chat_limit)
+function functionDo.optimizeStorage(size, ttl, count, immunity_delay, file_type, chat_ids, exclude_chat_ids, chat_limit)
 local file_type = file_type or ''
-return function_core.run_table{
-luatele = 'optimizeStorage',
+return functionCo.run_table{
+tdbot = 'optimizeStorage',
 size = size or -1,
 ttl = ttl or -1,
 count = count or -1,
 immunity_delay = immunity_delay or -1,
 file_type = {
-luatele = 'fileType' .. file_type
+tdbot = 'fileType' .. file_type
 },
-chat_ids = luatele_function.vectorize(chat_ids),
-exclude_chat_ids = luatele_function.vectorize(exclude_chat_ids),
+chat_ids = functionDo.vectorize(chat_ids),
+exclude_chat_ids = functionDo.vectorize(exclude_chat_ids),
 chat_limit = chat_limit
 }
 end
-function luatele_function.setNetworkType(type)
-return function_core.run_table{
-luatele = 'setNetworkType',
+function functionDo.setNetworkType(type)
+return functionCo.run_table{
+tdbot = 'setNetworkType',
 type = {
-luatele = 'networkType' .. type
+tdbot = 'networkType' .. type
 },
 }
 end
-function luatele_function.getNetworkStatistics(only_current)
-return function_core.run_table{
-luatele = 'getNetworkStatistics',
+function functionDo.getNetworkStatistics(only_current)
+return functionCo.run_table{
+tdbot = 'getNetworkStatistics',
 only_current = only_current
 }
 end
-function luatele_function.addNetworkStatistics(entry, file_type, network_type, sent_bytes, received_bytes, duration)
+function functionDo.addNetworkStatistics(entry, file_type, network_type, sent_bytes, received_bytes, duration)
 local file_type = file_type or 'None'
-return function_core.run_table{
-luatele = 'addNetworkStatistics',
+return functionCo.run_table{
+tdbot = 'addNetworkStatistics',
 entry = {
-luatele = 'networkStatisticsEntry' .. entry,
+tdbot = 'networkStatisticsEntry' .. entry,
 file_type = {
-luatele = 'fileType' .. file_type
+tdbot = 'fileType' .. file_type
 },
 network_type = {
-luatele = 'networkType' .. network_type
+tdbot = 'networkType' .. network_type
 },
 sent_bytes = sent_bytes,
 received_bytes = received_bytes,
@@ -2082,42 +2088,42 @@ duration = duration
 }
 }
 end
-function luatele_function.resetNetworkStatistics()
-return function_core.run_table{
-luatele = 'resetNetworkStatistics'
+function functionDo.resetNetworkStatistics()
+return functionCo.run_table{
+tdbot = 'resetNetworkStatistics'
 }
 end
-function luatele_function.getCountryCode()
-return function_core.run_table{
-luatele = 'getCountryCode'
+function functionDo.getCountryCode()
+return functionCo.run_table{
+tdbot = 'getCountryCode'
 }
 end
-function luatele_function.getInviteText()
-return function_core.run_table{
-luatele = 'getInviteText'
+function functionDo.getInviteText()
+return functionCo.run_table{
+tdbot = 'getInviteText'
 }
 end
-function luatele_function.getTermsOfService()
-return function_core.run_table{
-luatele = 'getTermsOfService'
+function functionDo.getTermsOfService()
+return functionCo.run_table{
+tdbot = 'getTermsOfService'
 }
 end
-function luatele_function.sendText(chat_id, reply_to_message_id, text, parse_mode, disable_web_page_preview, clear_draft, disable_notification, from_background, reply_markup)
+function functionDo.sendText(chat_id, reply_to_message_id, text, parse_mode, disable_web_page_preview, clear_draft, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageText',
+tdbot = 'inputMessageText',
 disable_web_page_preview = disable_web_page_preview,
 text = {text = text},
 clear_draft = clear_draft
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendAnimation(chat_id, reply_to_message_id, animation, caption, parse_mode, duration, width, height, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
+function functionDo.sendAnimation(chat_id, reply_to_message_id, animation, caption, parse_mode, duration, width, height, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageAnimation',
-animation = luatele_function.getInputFile(animation),
+tdbot = 'inputMessageAnimation',
+animation = functionDo.getInputFile(animation),
 thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(thumbnail),
 width = thumb_width,
 height = thumb_height
 },
@@ -2126,15 +2132,15 @@ duration = duration,
 width = width,
 height = height
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendAudio(chat_id, reply_to_message_id, audio, caption, parse_mode, duration, title, performer, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
+function functionDo.sendAudio(chat_id, reply_to_message_id, audio, caption, parse_mode, duration, title, performer, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageAudio',
-audio = luatele_function.getInputFile(audio),
+tdbot = 'inputMessageAudio',
+audio = functionDo.getInputFile(audio),
 album_cover_thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(thumbnail),
 width = thumb_width,
 height = thumb_height
 },
@@ -2143,118 +2149,118 @@ duration = duration,
 title = tostring(title),
 performer = tostring(performer)
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendDocument(chat_id, reply_to_message_id, document, caption, parse_mode, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
+function functionDo.sendDocument(chat_id, reply_to_message_id, document, caption, parse_mode, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageDocument',
-document = luatele_function.getInputFile(document),
+tdbot = 'inputMessageDocument',
+document = functionDo.getInputFile(document),
 thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(thumbnail),
 width = thumb_width,
 height = thumb_height
 },
 caption = {text = caption}
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendPhoto(chat_id, reply_to_message_id, photo, caption, parse_mode, added_sticker_file_ids, width, height, ttl, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
+function functionDo.sendPhoto(chat_id, reply_to_message_id, photo, caption, parse_mode, added_sticker_file_ids, width, height, ttl, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessagePhoto',
-photo = luatele_function.getInputFile(photo),
+tdbot = 'inputMessagePhoto',
+photo = functionDo.getInputFile(photo),
 thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(thumbnail),
 width = thumb_width,
 height = thumb_height
 },
 caption = {text = caption},
-added_sticker_file_ids = luatele_function.vectorize(added_sticker_file_ids),
+added_sticker_file_ids = functionDo.vectorize(added_sticker_file_ids),
 width = width,
 height = height,
 ttl = ttl or 0
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendSticker(chat_id, reply_to_message_id, sticker, width, height, disable_notification, thumbnail, thumb_width, thumb_height, from_background, reply_markup)
+function functionDo.sendSticker(chat_id, reply_to_message_id, sticker, width, height, disable_notification, thumbnail, thumb_width, thumb_height, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageSticker',
-sticker = luatele_function.getInputFile(sticker),
+tdbot = 'inputMessageSticker',
+sticker = functionDo.getInputFile(sticker),
 thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(thumbnail),
 width = thumb_width,
 height = thumb_height
 },
 width = width,
 height = height
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendVideo(chat_id, reply_to_message_id, video, caption, parse_mode, added_sticker_file_ids, duration, width, height, ttl, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
+function functionDo.sendVideo(chat_id, reply_to_message_id, video, caption, parse_mode, added_sticker_file_ids, duration, width, height, ttl, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageVideo',
-video = luatele_function.getInputFile(video),
+tdbot = 'inputMessageVideo',
+video = functionDo.getInputFile(video),
 thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(thumbnail),
 width = thumb_width,
 height = thumb_height
 },
 caption = {text = caption},
-added_sticker_file_ids = luatele_function.vectorize(added_sticker_file_ids),
+added_sticker_file_ids = functionDo.vectorize(added_sticker_file_ids),
 duration = duration,
 width = width,
 height = height,
 ttl = ttl
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendVideoNote(chat_id, reply_to_message_id, video_note, duration, length, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
+function functionDo.sendVideoNote(chat_id, reply_to_message_id, video_note, duration, length, thumbnail, thumb_width, thumb_height, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageVideoNote',
-video_note = luatele_function.getInputFile(video_note),
+tdbot = 'inputMessageVideoNote',
+video_note = functionDo.getInputFile(video_note),
 thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(thumbnail),
 width = thumb_width,
 height = thumb_height
 },
 duration = duration,
 length = length
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendVoiceNote(chat_id, reply_to_message_id, voice_note, caption, parse_mode, duration, waveform, disable_notification, from_background, reply_markup)
+function functionDo.sendVoiceNote(chat_id, reply_to_message_id, voice_note, caption, parse_mode, duration, waveform, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageVoiceNote',
-voice_note = luatele_function.getInputFile(voice_note),
+tdbot = 'inputMessageVoiceNote',
+voice_note = functionDo.getInputFile(voice_note),
 caption = {text = caption},
 duration = duration,
 waveform = waveform
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, parse_mode, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendLocation(chat_id, reply_to_message_id, latitude, longitude, disable_notification, from_background, reply_markup)
+function functionDo.sendLocation(chat_id, reply_to_message_id, latitude, longitude, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageLocation',
+tdbot = 'inputMessageLocation',
 location = {
-luatele = 'location',
+tdbot = 'location',
 latitude = latitude,
 longitude = longitude
 },
 live_period = liveperiod
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendVenue(chat_id, reply_to_message_id, latitude, longitude, title, address, provider, id, disable_notification, from_background, reply_markup)
+function functionDo.sendVenue(chat_id, reply_to_message_id, latitude, longitude, title, address, provider, id, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageVenue',
+tdbot = 'inputMessageVenue',
 venue = {
-luatele = 'venue',
+tdbot = 'venue',
 location = {
-luatele = 'location',
+tdbot = 'location',
   latitude = latitude,
   longitude = longitude
 },
@@ -2264,24 +2270,24 @@ provider = tostring(provider),
 id = tostring(id)
 }
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendContact(chat_id, reply_to_message_id, phone_number, first_name, last_name, user_id, disable_notification, from_background, reply_markup)
+function functionDo.sendContact(chat_id, reply_to_message_id, phone_number, first_name, last_name, user_id, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageContact',
+tdbot = 'inputMessageContact',
 contact = {
-luatele = 'contact',
+tdbot = 'contact',
 phone_number = tostring(phone_number),
 first_name = tostring(first_name),
 last_name = tostring(last_name),
 user_id = user_id
 }
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendInvoice(chat_id, reply_to_message_id, invoice, title, description, photo_url, photo_size, photo_width, photo_height, payload, provider_token, provider_data, start_parameter, disable_notification, from_background, reply_markup)
+function functionDo.sendInvoice(chat_id, reply_to_message_id, invoice, title, description, photo_url, photo_size, photo_width, photo_height, payload, provider_token, provider_data, start_parameter, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageInvoice',
+tdbot = 'inputMessageInvoice',
 invoice = invoice,
 title = tostring(title),
 description = tostring(description),
@@ -2294,80 +2300,80 @@ provider_token = tostring(provider_token),
 provider_data = tostring(provider_data),
 start_parameter = tostring(start_parameter)
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendForwarded(chat_id, reply_to_message_id, from_chat_id, message_id, in_game_share, disable_notification, from_background, reply_markup)
+function functionDo.sendForwarded(chat_id, reply_to_message_id, from_chat_id, message_id, in_game_share, disable_notification, from_background, reply_markup)
 local input_message_content = {
-luatele = 'inputMessageForwarded',
+tdbot = 'inputMessageForwarded',
 from_chat_id = from_chat_id,
 message_id = message_id,
 in_game_share = in_game_share
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content, nil, disable_notification, from_background, reply_markup)
 end
-function luatele_function.sendPoll(chat_id, reply_to_message_id, question, options, pollType,op,is_anonymous, allow_multiple_answers)
+function functionDo.sendPoll(chat_id, reply_to_message_id, question, options, pollType,op,is_anonymous, allow_multiple_answers)
 if pollType == "Quiz" then
 typet = {
 explanation = {
 text = op
 },
-luatele = 'pollType'..pollType,
+tdbot = 'pollType'..pollType,
 allow_multiple_answers = allow_multiple_answers
 }
 else
 typet = {
-luatele = 'pollType'..pollType,
+tdbot = 'pollType'..pollType,
 allow_multiple_answers = allow_multiple_answers
 }
 end
 local input_message_content = {
-luatele = 'inputMessagePoll',
+tdbot = 'inputMessagePoll',
 is_anonymous = is_anonymous,
 question = question,
 type = typet,
 options = options
 }
-return luatele_function.sendMessage(chat_id, reply_to_message_id, input_message_content)
+return functionDo.sendMessage(chat_id, reply_to_message_id, input_message_content)
 end
-function luatele_function.getPollVoters(chat_id, message_id, option_id, offset, limit)
-return function_core.run_table{
-luatele = 'getPollVoters',
+function functionDo.getPollVoters(chat_id, message_id, option_id, offset, limit)
+return functionCo.run_table{
+tdbot = 'getPollVoters',
 chat_id = chat_id,
 message_id = message_id,
 option_id = option_id,
-limit = luatele_function.setLimit(50 , limit),
+limit = functionDo.setLimit(50 , limit),
 offset = offset
 }
 end
-function luatele_function.setPollAnswer(chat_id, message_id, option_ids)
-return function_core.run_table{
-luatele = 'setPollAnswer',
+function functionDo.setPollAnswer(chat_id, message_id, option_ids)
+return functionCo.run_table{
+tdbot = 'setPollAnswer',
 chat_id = chat_id,
 message_id = message_id,
 option_ids = option_ids
 }
 end
-function luatele_function.stopPoll(chat_id, message_id, reply_markup)
-return function_core.run_table{
-luatele = 'stopPoll',
+function functionDo.stopPoll(chat_id, message_id, reply_markup)
+return functionCo.run_table{
+tdbot = 'stopPoll',
 chat_id = chat_id,
 message_id = message_id,
 reply_markup = reply_markup
 }
 end
-function luatele_function.getInputMessage(value)
+function functionDo.getInputMessage(value)
 if type(value) ~= 'table' then
 return value
 end
 if type(value.type) == 'string' then
 if value.parse_mode and value.caption then
-caption = luatele_function.parseTextEntities(value.caption, value.parse_mode)
+caption = functionDo.parseTextEntities(value.caption, value.parse_mode)
   elseif value.caption and not value.parse_mode then
 caption = {
   text = value.caption
 }
   elseif value.parse_mode and value.text then
-text = luatele_function.parseTextEntities(value.text, value.parse_mode)
+text = functionDo.parseTextEntities(value.text, value.parse_mode)
   elseif not value.parse_mode and value.text then
 text = {
   text = value.text
@@ -2376,18 +2382,18 @@ end
 value.type = string.lower(value.type)
 if value.type == 'text' then
 return {
-luatele = 'inputMessageText',
+tdbot = 'inputMessageText',
   disable_web_page_preview = value.disable_web_page_preview,
   text = text,
   clear_draft = value.clear_draft
 }
   elseif value.type == 'animation' then
 return {
-luatele = 'inputMessageAnimation',
-  animation = luatele_function.getInputFile(value.animation),
+tdbot = 'inputMessageAnimation',
+  animation = functionDo.getInputFile(value.animation),
   thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(value.thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(value.thumbnail),
 width = value.thumb_width,
 height = value.thumb_height
 },
@@ -2398,11 +2404,11 @@ height = value.thumb_height
 }
   elseif value.type == 'audio' then
 return {
-luatele = 'inputMessageAudio',
-  audio = luatele_function.getInputFile(value.audio),
+tdbot = 'inputMessageAudio',
+  audio = functionDo.getInputFile(value.audio),
   album_cover_thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(value.thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(value.thumbnail),
 width = value.thumb_width,
 height = value.thumb_height
 },
@@ -2413,11 +2419,11 @@ height = value.thumb_height
 }
   elseif value.type == 'document' then
 return {
-luatele = 'inputMessageDocument',
-  document = luatele_function.getInputFile(value.document),
+tdbot = 'inputMessageDocument',
+  document = functionDo.getInputFile(value.document),
   thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(value.thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(value.thumbnail),
 width = value.thumb_width,
 height = value.thumb_height
 },
@@ -2425,32 +2431,32 @@ height = value.thumb_height
 }
   elseif value.type == 'photo' then
 return {
-luatele = 'inputMessagePhoto',
-  photo = luatele_function.getInputFile(value.photo),
+tdbot = 'inputMessagePhoto',
+  photo = functionDo.getInputFile(value.photo),
   thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(value.thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(value.thumbnail),
 width = value.thumb_width,
 height = value.thumb_height
 },
   caption = caption,
-  added_sticker_file_ids = luatele_function.vectorize(value.added_sticker_file_ids),
+  added_sticker_file_ids = functionDo.vectorize(value.added_sticker_file_ids),
   width = value.width,
   height = value.height,
   ttl = value.ttl or 0
 }
   elseif value.text == 'video' then
 return {
-luatele = 'inputMessageVideo',
-  video = luatele_function.getInputFile(value.video),
+tdbot = 'inputMessageVideo',
+  video = functionDo.getInputFile(value.video),
   thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(value.thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(value.thumbnail),
 width = value.thumb_width,
 height = value.thumb_height
 },
   caption = caption,
-  added_sticker_file_ids = luatele_function.vectorize(value.added_sticker_file_ids),
+  added_sticker_file_ids = functionDo.vectorize(value.added_sticker_file_ids),
   duration = value.duration,
   width = value.width,
   height = value.height,
@@ -2458,11 +2464,11 @@ height = value.thumb_height
 }
   elseif value.text == 'videonote' then
 return {
-luatele = 'inputMessageVideoNote',
-  video_note = luatele_function.getInputFile(value.video_note),
+tdbot = 'inputMessageVideoNote',
+  video_note = functionDo.getInputFile(value.video_note),
   thumbnail = {
-luatele = 'inputThumbnail',
-thumbnail = luatele_function.getInputFile(value.thumbnail),
+tdbot = 'inputThumbnail',
+thumbnail = functionDo.getInputFile(value.thumbnail),
 width = value.thumb_width,
 height = value.thumb_height
 },
@@ -2471,17 +2477,17 @@ height = value.thumb_height
 }
   elseif value.text == 'voice' then
 return {
-luatele = 'inputMessageVoiceNote',
-  voice_note = luatele_function.getInputFile(value.voice_note),
+tdbot = 'inputMessageVoiceNote',
+  voice_note = functionDo.getInputFile(value.voice_note),
   caption = caption,
   duration = value.duration,
   waveform = value.waveform
 }
   elseif value.text == 'location' then
 return {
-luatele = 'inputMessageLocation',
+tdbot = 'inputMessageLocation',
   location = {
-luatele = 'location',
+tdbot = 'location',
 latitude = value.latitude,
 longitude = value.longitude
 },
@@ -2489,9 +2495,9 @@ longitude = value.longitude
 }
   elseif value.text == 'contact' then
 return {
-luatele = 'inputMessageContact',
+tdbot = 'inputMessageContact',
   contact = {
-luatele = 'contact',
+tdbot = 'contact',
 phone_number = tostring(value.phone_number),
 first_name = tostring(value.first_name),
 last_name = tostring(value.last_name),
@@ -2500,9 +2506,9 @@ user_id = value.user_id
 }
   elseif value.text == 'contact' then
 return {
-luatele = 'inputMessageContact',
+tdbot = 'inputMessageContact',
   contact = {
-luatele = 'contact',
+tdbot = 'contact',
 phone_number = tostring(value.phone_number),
 first_name = tostring(value.first_name),
 last_name = tostring(value.last_name),
@@ -2512,14 +2518,14 @@ user_id = value.user_id
 end
 end
 end
-function luatele_function.editInlineMessageText(inline_message_id, input_message_content, reply_markup)
-return function_core.run_table{
-luatele = 'editInlineMessageText',
-input_message_content = luatele_function.getInputMessage(input_message_content),
+function functionDo.editInlineMessageText(inline_message_id, input_message_content, reply_markup)
+return functionCo.run_table{
+tdbot = 'editInlineMessageText',
+input_message_content = functionDo.getInputMessage(input_message_content),
 reply_markup = reply_markup
 }
 end
-function luatele_function.answerInlineQuery(inline_query_id, results, next_offset, switch_pm_text, switch_pm_parameter, is_personal, cache_time)
+function functionDo.answerInlineQuery(inline_query_id, results, next_offset, switch_pm_text, switch_pm_parameter, is_personal, cache_time)
 local answerInlineQueryResults = {}
   for key, value in pairs(results) do
 local newAnswerInlineQueryResults_id = #answerInlineQueryResults + 1
@@ -2527,7 +2533,7 @@ if type(value) == 'table' and type(value.type) == 'string' then
 value.type = string.lower(value.type)
 if value.type == 'gif' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultAnimatedGif',
+tdbot = 'inputInlineQueryResultAnimatedGif',
 id = value.id,
 title = value.title,
 thumbnail_url = value.thumbnail_url,
@@ -2535,15 +2541,15 @@ gif_url = value.gif_url,
 gif_duration = value.gif_duration,
 gif_width = value.gif_width,
 gif_height = value.gif_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'mpeg4' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultAnimatedMpeg4',
+tdbot = 'inputInlineQueryResultAnimatedMpeg4',
 id = value.id,
 title = value.title,
 thumbnail_url = value.thumbnail_url,
@@ -2551,15 +2557,15 @@ mpeg4_url = value.mpeg4_url,
 mpeg4_duration = value.mpeg4_duration,
 mpeg4_width = value.mpeg4_width,
 mpeg4_height = value.mpeg4_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'article' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultArticle',
+tdbot = 'inputInlineQueryResultArticle',
 id = value.id,
 url = value.url,
 hide_url = value.hide_url,
@@ -2568,43 +2574,43 @@ description = value.description,
 thumbnail_url = value.thumbnail_url,
 thumbnail_width = value.thumbnail_width,
 thumbnail_height = value.thumbnail_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'audio' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultAudio',
+tdbot = 'inputInlineQueryResultAudio',
 id = value.id,
 title = value.title,
 performer = value.performer,
 audio_url = value.audio_url,
 audio_duration = value.audio_duration,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'contact' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultContact',
+tdbot = 'inputInlineQueryResultContact',
 id = value.id,
 contact = value.contact,
 thumbnail_url = value.thumbnail_url,
 thumbnail_width = value.thumbnail_width,
 thumbnail_height = thumbnail_height.description,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'document' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultDocument',
+tdbot = 'inputInlineQueryResultDocument',
 id = value.id,
 title = value.title,
 description = value.description,
@@ -2613,26 +2619,26 @@ mime_type = value.mime_type,
 thumbnail_url = value.thumbnail_url,
 thumbnail_width = value.thumbnail_width,
 thumbnail_height = value.thumbnail_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'game' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultGame',
+tdbot = 'inputInlineQueryResultGame',
 id = value.id,
 game_short_name = value.game_short_name,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'location' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultLocation',
+tdbot = 'inputInlineQueryResultLocation',
 id = value.id,
 location = value.location,
 live_period = value.live_period,
@@ -2640,15 +2646,15 @@ title = value.title,
 thumbnail_url = value.thumbnail_url,
 thumbnail_width = value.thumbnail_width,
 thumbnail_height = value.thumbnail_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'photo' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultPhoto',
+tdbot = 'inputInlineQueryResultPhoto',
 id = value.id,
 title = value.title,
 description = value.description,
@@ -2656,15 +2662,15 @@ thumbnail_url = value.thumbnail_url,
 photo_url = value.photo_url,
 photo_width = value.photo_width,
 photo_height = value.photo_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'sticker' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultSticker',
+tdbot = 'inputInlineQueryResultSticker',
 id = value.id,
 thumbnail_url = value.thumbnail_url,
 sticker_url = value.sticker_url,
@@ -2672,15 +2678,15 @@ sticker_width = value.sticker_width,
 sticker_height = value.sticker_height,
 photo_width = value.photo_width,
 photo_height = value.photo_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'sticker' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultSticker',
+tdbot = 'inputInlineQueryResultSticker',
 id = value.id,
 thumbnail_url = value.thumbnail_url,
 sticker_url = value.sticker_url,
@@ -2688,15 +2694,15 @@ sticker_width = value.sticker_width,
 sticker_height = value.sticker_height,
 photo_width = value.photo_width,
 photo_height = value.photo_height,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'video' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultVideo',
+tdbot = 'inputInlineQueryResultVideo',
 id = value.id,
 title = value.title,
 description = value.description,
@@ -2706,30 +2712,30 @@ mime_type = value.mime_type,
 video_width = value.video_width,
 video_height = value.video_height,
 video_duration = value.video_duration,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 elseif value.type == 'videonote' then
   answerInlineQueryResults[newAnswerInlineQueryResults_id] = {
-luatele = 'inputInlineQueryResultVoiceNote',
+tdbot = 'inputInlineQueryResultVoiceNote',
 id = value.id,
 title = value.title,
 voice_note_url = value.voice_note_url,
 voice_note_duration = value.voice_note_duration,
-reply_markup = luatele_function.replyMarkup{
+reply_markup = functionDo.replyMarkup{
 type = 'inline',
 data = value.reply_markup
 },
-input_message_content = luatele_function.getInputMessage(value.input)
+input_message_content = functionDo.getInputMessage(value.input)
 }
 end
 end
 end
-return function_core.run_table{
-luatele = 'answerInlineQuery',
+return functionCo.run_table{
+tdbot = 'answerInlineQuery',
 inline_query_id = inline_query_id,
 next_offset = next_offset,
 switch_pm_text = switch_pm_text,
@@ -2739,40 +2745,40 @@ cache_time = cache_time,
 results = answerInlineQueryResults,
 }
 end
-function luatele.VERSION()
+function tdbot.VERSION()
   print('login')
 return true
 end
-function luatele.run(main_def, filters)
+function tdbot.run(main_def, filters)
 if type(main_def) ~= 'function' then
-function_core.print_error('the run main_def must be a main function !')
+functionCo.print_error('the run main_def must be a main function !')
 os.exit(1)
   else
-update_functions[0] = {}
-update_functions[0].def = main_def
-update_functions[0].filters = filters
+functionUp[0] = {}
+functionUp[0].def = main_def
+functionUp[0].filters = filters
 end
-  while luatele.get_update do
-for timer_id, timer_data in pairs(luatele_timer) do
+  while tdbot.get_update do
+for timer_id, timer_data in pairs(functionTi) do
 if os.time() >= timer_data.run_in then
-  xpcall(timer_data.def, function_core.print_error,timer_data.argv)
-  table.remove(luatele_timer,timer_id)
+  xpcall(timer_data.def, functionCo.print_error,timer_data.argv)
+  table.remove(functionTi,timer_id)
 end
 end
-local update = function_core.change_table(client:receive(1))
+local update = functionCo.change_table(client:receive(1))
 if update then
 if type(update) ~= 'table' then
 goto finish
 end
-if luatele.login(update) then
-function_core._CALL_(update)
+if tdbot.login(update) then
+functionCo._CALL_(update)
 end
 end
 ::finish::
 end
 end
-function luatele.set_config(data)
-luatele.VERSION()
+function tdbot.set_config(data)
+tdbot.VERSION()
 if not data.api_hash then
 print('Please enter AP_HASH to call')
 os.exit()
@@ -2785,43 +2791,43 @@ if not data.session_name then
 print('please use session_name in your script !')
 os.exit()
 end
-if not data.token and not luatele_function.exists('.infoBot/'..data.session_name) then
+if not data.token and not functionDo.exists('.CallBack-Bot/'..data.session_name) then
 io.write('Please enter Token or Phone to call')
 local phone_token = io.read()
 if phone_token:match('%d+:') then
-luatele.config.is_bot = true
-luatele.config.token = phone_token
+tdbot.config.is_bot = true
+tdbot.config.token = phone_token
 else
-luatele.config.is_bot = false
-luatele.config.phone = phone_token
+tdbot.config.is_bot = false
+tdbot.config.phone = phone_token
 end
-elseif data.token and not luatele_function.exists('.infoBot/'..data.session_name) then
-luatele.config.is_bot = true
-luatele.config.token = data.token
+elseif data.token and not functionDo.exists('.CallBack-Bot/'..data.session_name) then
+tdbot.config.is_bot = true
+tdbot.config.token = data.token
 end
-if not luatele_function.exists('.infoBot') then
-os.execute('sudo mkdir .infoBot')
+if not functionDo.exists('.CallBack-Bot') then
+os.execute('sudo mkdir .CallBack-Bot')
 end
-luatele.config.encryption_key = data.encryption_key or ''
-luatele.config.parameters = {
-luatele = 'setTdlibParameters',
+tdbot.config.encryption_key = data.encryption_key or ''
+tdbot.config.parameters = {
+tdbot = 'setTdlibParameters',
 use_message_database = data.use_message_database or true,
 api_id = data.api_id,
 api_hash = data.api_hash,
 use_secret_chats = use_secret_chats or true,
 system_language_code = data.language_code or 'en',
-device_model = 'luatele',
+device_model = 'tdbot',
 system_version = data.system_version or 'linux',
 application_version = '1.0',
 enable_storage_optimizer = data.enable_storage_optimizer or true,
 use_pfs = data.use_pfs or true,
-database_directory = '.infoBot/'..data.session_name
+database_directory = '.CallBack-Bot/'..data.session_name
 }
-return luatele_function
+return functionDo
 end
-function luatele.login(state)
+function tdbot.login(state)
 if state.name == 'version' and state.value and state.value.value then
-elseif state.authorization_state and state.authorization_state.luatele == 'error' and (state.authorization_state.message == 'PHONE_NUMBER_INVALID' or state.authorization_state.message == 'ACCESS_TOKEN_INVALID') then
+elseif state.authorization_state and state.authorization_state.tdbot == 'error' and (state.authorization_state.message == 'PHONE_NUMBER_INVALID' or state.authorization_state.message == 'ACCESS_TOKEN_INVALID') then
 if state.authorization_state.message == 'PHONE_NUMBER_INVALID' then
 print('Phone Number invalid Error ?!')
 else
@@ -2830,85 +2836,85 @@ end
 io.write('Please Use Token or Phone to call : ')
 local phone_token = io.read()
 if phone_token:match('%d+:') then
-function_core.send_tdlib{
-luatele = 'checkAuthenticationBotToken',
+functionCo.send_tdlib{
+tdbot = 'checkAuthenticationBotToken',
 token = phone_token
 }
 else
-function_core.send_tdlib{
-luatele = 'setAuthenticationPhoneNumber',
+functionCo.send_tdlib{
+tdbot = 'setAuthenticationPhoneNumber',
 phone_number = phone_token
 }
 end
-elseif state.authorization_state and state.authorization_state.luatele == 'error' and state.authorization_state.message == 'PHONE_CODE_INVALID' then
+elseif state.authorization_state and state.authorization_state.tdbot == 'error' and state.authorization_state.message == 'PHONE_CODE_INVALID' then
 io.write('The Code : ')
 local code = io.read()
-function_core.send_tdlib{
-luatele = 'checkAuthenticationCode',
+functionCo.send_tdlib{
+tdbot = 'checkAuthenticationCode',
 code = code
 }
-elseif state.authorization_state and state.authorization_state.luatele == 'error' and state.authorization_state.message == 'PASSWORD_HASH_INVALID' then
+elseif state.authorization_state and state.authorization_state.tdbot == 'error' and state.authorization_state.message == 'PASSWORD_HASH_INVALID' then
 print('two-step is wrong !')
 io.write('The Password : ')
 local password = io.read()
-function_core.send_tdlib{
-luatele = 'checkAuthenticationPassword',
+functionCo.send_tdlib{
+tdbot = 'checkAuthenticationPassword',
 password = password
 }
-elseif state.luatele == 'authorizationStateWaitTdlibParameters' or (state.authorization_state and state.authorization_state.luatele == 'authorizationStateWaitTdlibParameters') then
-function_core.send_tdlib{
-luatele = 'setTdlibParameters',
-parameters = luatele.config.parameters
+elseif state.tdbot == 'authorizationStateWaitTdlibParameters' or (state.authorization_state and state.authorization_state.tdbot == 'authorizationStateWaitTdlibParameters') then
+functionCo.send_tdlib{
+tdbot = 'setTdlibParameters',
+parameters = tdbot.config.parameters
 }
-elseif state.authorization_state and state.authorization_state.luatele == 'authorizationStateWaitEncryptionKey' then
-function_core.send_tdlib{
-luatele = 'checkDatabaseEncryptionKey',
-encryption_key = luatele.config.encryption_key
+elseif state.authorization_state and state.authorization_state.tdbot == 'authorizationStateWaitEncryptionKey' then
+functionCo.send_tdlib{
+tdbot = 'checkDatabaseEncryptionKey',
+encryption_key = tdbot.config.encryption_key
 }
-elseif state.authorization_state and state.authorization_state.luatele == 'authorizationStateWaitPhoneNumber' then
-if luatele.config.is_bot then
-function_core.send_tdlib{
-luatele = 'checkAuthenticationBotToken',
-token = luatele.config.token
+elseif state.authorization_state and state.authorization_state.tdbot == 'authorizationStateWaitPhoneNumber' then
+if tdbot.config.is_bot then
+functionCo.send_tdlib{
+tdbot = 'checkAuthenticationBotToken',
+token = tdbot.config.token
 }
 else
-function_core.send_tdlib{
-luatele = 'setAuthenticationPhoneNumber',
-phone_number = luatele.config.phone
+functionCo.send_tdlib{
+tdbot = 'setAuthenticationPhoneNumber',
+phone_number = tdbot.config.phone
 }
 end
-elseif state.authorization_state and state.authorization_state.luatele == 'authorizationStateWaitCode' then
+elseif state.authorization_state and state.authorization_state.tdbot == 'authorizationStateWaitCode' then
 io.write('The Password : ')
 local code = io.read()
-function_core.send_tdlib{
-luatele = 'checkAuthenticationCode',
+functionCo.send_tdlib{
+tdbot = 'checkAuthenticationCode',
 code = code
 }
-elseif state.authorization_state and state.authorization_state.luatele == 'authorizationStateWaitPassword' then
+elseif state.authorization_state and state.authorization_state.tdbot == 'authorizationStateWaitPassword' then
 io.write('Password [ '..state.authorization_state.password_hint..' ] : ')
 local password = io.read()
-function_core.send_tdlib{
-luatele = 'checkAuthenticationPassword',
+functionCo.send_tdlib{
+tdbot = 'checkAuthenticationPassword',
 password = password
 }
-elseif state.authorization_state and state.authorization_state.luatele == 'authorizationStateWaitRegistration' then
+elseif state.authorization_state and state.authorization_state.tdbot == 'authorizationStateWaitRegistration' then
 io.write('The First name : ')
 local first_name = io.read()
 io.write('The Last name : ')
 local last_name = io.read()
-function_core.send_tdlib{
-luatele = 'registerUser',
+functionCo.send_tdlib{
+tdbot = 'registerUser',
 first_name = first_name,
 last_name = last_name
 }
-elseif state.authorization_state and state.authorization_state.luatele == 'authorizationStateReady' then
-print("- تم اكمال المعلومات جارِ تشغيل البوت .")
-elseif state.authorization_state and state.authorization_state.luatele == 'authorizationStateClosed' then
+elseif state.authorization_state and state.authorization_state.tdbot == 'authorizationStateReady' then
+print("The files have been connected and played ...")
+elseif state.authorization_state and state.authorization_state.tdbot == 'authorizationStateClosed' then
 print('- تم تسجيل الخروج .')
-luatele.get_update = false
-elseif state.luatele == 'error' and state.message then
-elseif not (state.luatele and luatele_function.in_array({'updateConnectionState', 'updateSelectedBackground', 'updateConnectionState', 'updateOption',}, state.luatele)) then
+tdbot.get_update = false
+elseif state.tdbot == 'error' and state.message then
+elseif not (state.tdbot and functionDo.in_array({'updateConnectionState', 'updateSelectedBackground', 'updateConnectionState', 'updateOption',}, state.tdbot)) then
 return true
 end
 end
-return luatele
+return tdbot
